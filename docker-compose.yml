@@ -1,0 +1,30 @@
+# Lancement en prod (sur le NUC) :  docker compose up -d --build
+# Mise à jour après un git pull :    docker compose up -d --build
+# Logs en direct :                   docker compose logs -f
+
+services:
+  entrepotes:
+    build: .
+    image: entrepotes:latest
+    container_name: entrepotes
+    restart: unless-stopped
+    # Identifiants admin, ADMIN_LOCAL_ONLY… (fichier .env à côté de ce fichier, jamais sur Git)
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      MEMES_DIR: /app/data/memes
+    ports:
+      # Port côté NUC configurable avec GAME_PORT dans .env (3000 par défaut).
+      - "${GAME_PORT:-3000}:3000"
+    volumes:
+      # Les images Top Meme survivent aux mises à jour et aux redémarrages.
+      - memes-data:/app/data/memes
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  memes-data:
