@@ -1,5 +1,6 @@
 # Lancement en prod (sur le NUC) :  docker compose up -d --build
 # Mise à jour après un git pull :    docker compose up -d --build
+# Lien public à envoyer aux potes :  ./scripts/lien-public.sh
 # Logs en direct :                   docker compose logs -f
 
 services:
@@ -25,6 +26,23 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  # Cloudflare Tunnel : rend le jeu accessible depuis Internet (lien https://…trycloudflare.com)
+  # sans ouvrir de port sur la box. Le lien change seulement si ce conteneur redémarre
+  # (reboot du NUC…) : ./scripts/lien-public.sh affiche toujours le lien actuel.
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: entrepotes-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://entrepotes:3000
+    depends_on:
+      entrepotes:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
 
 volumes:
   memes-data:
