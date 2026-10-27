@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin — Bibliothèque Top Meme</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <div>
+      <h1>Bibliothèque Top Meme</h1>
+      <p class="muted">Espace admin</p>
+    </div>
+    <form method="post" action="/admin/logout">
+      <button type="submit" class="ghost">Se déconnecter</button>
+    </form>
+  </header>
+
+  <main class="admin-main">
+    <section class="stats" id="stats" aria-live="polite"></section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Doublons probables</h2>
+          <p class="muted">Images qui se ressemblent fortement. Celle marquée « À garder » est la meilleure résolution.</p>
+        </div>
+        <label class="threshold">Sensibilité
+          <select id="threshold">
+            <option value="4">Stricte (quasi identiques)</option>
+            <option value="8" selected>Normale</option>
+            <option value="12">Large (plus de suggestions)</option>
+          </select>
+        </label>
+      </div>
+      <div id="groups"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Toutes les images</h2>
+          <p class="muted">Les plus récentes en premier. Clique sur une image pour l’ouvrir en grand.</p>
+        </div>
+      </div>
+      <div class="grid" id="all"></div>
+      <button type="button" class="ghost more" id="more" hidden>Voir plus</button>
+    </section>
+  </main>
+
+  <script src="/admin/admin.js"></script>
+</body>
+</html>

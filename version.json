@@ -1,0 +1,13 @@
+{
+  "_info": "Modifie ce fichier pour annoncer une nouvelle version : numéro, nom, date (AAAA-MM-JJ) et liste des nouveautés. C'est pris en compte immédiatement, sans redémarrer le serveur.",
+  "version": "0.2.0",
+  "name": "Top Meme",
+  "date": "2026-10-27",
+  "notes": [
+    "Nouveau mode « Top Meme » : chacun reçoit une image au hasard et la transforme en meme",
+    "Éditeur de meme : textes et emojis à placer où tu veux, taille et couleur au choix",
+    "Votes anonymes 👍 Top / 😐 Bof / 👎 Flop, puis classement des rois du meme",
+    "Bibliothèque d’images commune alimentée par les joueurs, doublons détectés automatiquement",
+    "Les photos envoyées sont nettoyées de leurs données privées (position GPS…)"
+  ]
+}

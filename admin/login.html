@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Connexion admin — Entre Potes</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <h1>Espace admin</h1>
+    <p class="muted">Bibliothèque d’images Top Meme</p>
+    <p class="alert" id="error" role="alert" hidden></p>
+    <form method="post" action="/admin/login">
+      <label>Identifiant
+        <input name="username" autocomplete="username" required autofocus>
+      </label>
+      <label>Mot de passe
+        <input name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <button type="submit" class="primary">Se connecter</button>
+    </form>
+  </main>
+  <script>
+    const error = new URLSearchParams(location.search).get('error');
+    if (error) {
+      const box = document.getElementById('error');
+      box.textContent = error === 'locked'
+        ? 'Trop d’essais ratés. Réessaie dans 15 minutes.'
+        : 'Identifiant ou mot de passe incorrect.';
+      box.hidden = false;
+    }
+  </script>
+</body>
+</html>
