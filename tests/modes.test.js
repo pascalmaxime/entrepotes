@@ -49,3 +49,15 @@ test('Tier List : chaque joueur doit apparaître une seule fois', () => {
   assert.equal(tierList.normalizeVote(['a', 'b', 'z'], { playerIds: ids }), null);
   assert.deepEqual(tierList.normalizeVote(['c', 'a', 'b'], { playerIds: ids }), ['c', 'a', 'b']);
 });
+
+test('Tier List : le détail donne le classement complet de chaque joueur', () => {
+  const votes = new Map([
+    ['a', ['b', 'a', 'c']],
+    ['c', ['c', 'b', 'a']],
+  ]);
+  const result = tierList.aggregate(votes, ids);
+  assert.deepEqual(result.details, [
+    { voterId: 'a', ranking: ['b', 'a', 'c'] },
+    { voterId: 'c', ranking: ['c', 'b', 'a'] },
+  ]);
+});

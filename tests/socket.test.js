@@ -48,7 +48,7 @@ test('HTTP : santé, version et modes', async () => {
   assert.equal(typeof version.version, 'string');
   assert.ok(Array.isArray(version.notes));
   const modes = await (await fetch(`${url}/api/modes`)).json();
-  assert.deepEqual(modes.map((m) => m.id), ['qui-de-nous', 'tier-list', 'top-meme']);
+  assert.deepEqual(modes.map((m) => m.id), ['qui-de-nous', 'tier-list', 'top-meme', 'm-culture', 'imposteur', 'juste-prix', 'paint']);
   assert.ok(modes.every((m) => m.available));
 });
 
@@ -179,6 +179,98 @@ test('espace admin : connexion obligatoire, puis catalogue et suppression', asyn
   assert.equal(server.memeLibrary.count, before - 1);
   assert.equal((await fetch(`${url}/memes/${first.id}.jpg`)).status, 404);
 
+  // Import groupé depuis l'admin (pack d'images)
+  const image = makeJpeg(120, 90, (x, y) => [(x * 7) % 256, (y * 13) % 256, (x * y) % 256]);
+  const post = (headers) => fetch(`${url}/admin/api/images`, { method: 'POST', headers: { 'Content-Type': 'image/jpeg', ...headers }, body: image });
+  assert.equal((await post({ 'X-Admin-Request': '1' })).status, 401, 'sans cookie');
+  assert.equal((await post({ cookie })).status, 403, 'sans en-tête anti-CSRF');
+  const imported = await (await post({ cookie, 'X-Admin-Request': '1' })).json();
+  assert.equal(imported.ok, true);
+  assert.equal(imported.duplicate, null);
+  assert.equal((await (await post({ cookie, 'X-Admin-Request': '1' })).json()).duplicate, 'exact');
+  assert.equal(server.memeLibrary.list().find((e) => e.id === imported.id)?.uploadedBy, 'admin');
+
   const fakeCookie = `${cookie.split('.')[0]}.signature-bidon`;
   assert.equal((await fetch(`${url}/admin/api/library`, { headers: { cookie: fakeCookie } })).status, 401);
+});
+
+test('partie M-Culture complète : réponses cachées, correction, classement', async () => {
+  const [alice, bob] = await Promise.all([client(), client()]);
+  const created = await call(alice, 'lobby:create', { name: 'Alice', mode: 'm-culture' });
+  await call(bob, 'lobby:join', { code: created.code, name: 'Bob' });
+  assert.equal((await call(alice, 'lobby:set-settings', { questions: 5, timer: 0, categories: ['culture'] })).ok, true);
+  await waitFor(() => last(bob)?.settings.questions === 5);
+  assert.equal(last(bob).limits.quiz.categories.length, 6);
+
+  assert.equal((await call(alice, 'game:start')).ok, true);
+  await waitFor(() => last(bob)?.state === 'quiz');
+  const total = last(bob).game.quiz.total;
+  assert.equal(total, 5);
+  for (let index = 0; index < total; index += 1) {
+    await waitFor(() => last(bob)?.game?.quiz?.index === index);
+    assert.equal(last(bob).game.quiz.question.answer, undefined);
+    assert.equal((await call(bob, 'quiz:answer', { index, text: 'réponse de Bob' })).ok, true);
+    assert.equal((await call(alice, 'quiz:answer', { index, text: server.manager.get(created.code).game.questions[index].answer })).ok, true);
+  }
+  await waitFor(() => last(bob)?.state === 'review');
+  const review = last(bob).game.review;
+  assert.equal(review.answers.find((r) => r.playerId === created.playerId).correct, true);
+  assert.equal((await call(bob, 'quiz:finish')).ok, false, 'seul l’hôte corrige');
+  assert.equal((await call(alice, 'quiz:review', { index: 4 })).ok, true);
+  assert.equal((await call(alice, 'quiz:finish')).ok, true);
+  await waitFor(() => last(bob)?.state === 'finished');
+  assert.equal(last(bob).game.final.ranking[0].playerId, created.playerId);
+  alice.close();
+  bob.close();
+});
+
+test('partie Juste Prix via les sockets : réponse, révélation, fin', async () => {
+  const [alice, bob] = await Promise.all([client(), client()]);
+  const created = await call(alice, 'lobby:create', { name: 'Alice', mode: 'juste-prix' });
+  await call(bob, 'lobby:join', { code: created.code, name: 'Bob' });
+  assert.equal((await call(alice, 'lobby:set-settings', { rounds: 1, jpTimer: 0, jpCategories: ['distances'] })).ok, true);
+  assert.equal((await call(alice, 'game:start')).ok, true);
+  await waitFor(() => last(bob)?.state === 'jp-question');
+  const { index, question } = last(bob).game.justePrix;
+  assert.equal(question.kind, 'estimate');
+  assert.equal((await call(bob, 'jp:answer', { index, value: 'pas un nombre' })).ok, false);
+  assert.equal((await call(bob, 'jp:answer', { index, value: '12,5' })).ok, true);
+  assert.equal((await call(alice, 'jp:answer', { index, value: '1 000' })).ok, true);
+  await waitFor(() => last(bob)?.state === 'jp-reveal');
+  assert.equal(typeof last(bob).game.result.answer, 'number');
+  assert.equal((await call(alice, 'game:next')).ok, true);
+  await waitFor(() => last(bob)?.state === 'finished');
+  alice.close();
+  bob.close();
+});
+
+test('partie Paint via les sockets : dessin relayé en direct, devinette, synchro', async () => {
+  const [alice, bob] = await Promise.all([client(), client()]);
+  const ops = [];
+  bob.on('paint:op', (msg) => ops.push(msg));
+  alice.on('paint:op', (msg) => ops.push(msg));
+  const created = await call(alice, 'lobby:create', { name: 'Alice', mode: 'paint' });
+  await call(bob, 'lobby:join', { code: created.code, name: 'Bob' });
+  assert.equal((await call(alice, 'lobby:set-settings', { paintTurns: 1, paintTimer: 60 })).ok, true);
+  assert.equal((await call(alice, 'game:start')).ok, true);
+  await waitFor(() => last(alice)?.state === 'paint-choose');
+  const drawerIsAlice = last(alice).game.paint.drawerId === created.playerId;
+  const [drawer, guesser] = drawerIsAlice ? [alice, bob] : [bob, alice];
+  await waitFor(() => last(drawer)?.game?.paint?.choices && last(guesser)?.state === 'paint-choose');
+  assert.equal(last(guesser).game.paint.choices, null);
+  assert.equal((await call(drawer, 'paint:choose', { difficulty: 'facile' })).ok, true);
+  await waitFor(() => last(drawer)?.state === 'paint-draw' && last(guesser)?.state === 'paint-draw');
+  const word = last(drawer).game.paint.word;
+  assert.equal(last(guesser).game.paint.word, null);
+  assert.equal((await call(drawer, 'paint:draw', { op: { t: 's', id: 'x1', tool: 'pen', color: '#000000', size: 10, pts: [1, 2, 3, 4] } })).ok, true);
+  await waitFor(() => ops.length === 1);
+  assert.equal(ops[0].op.id, 'x1', 'le trait arrive chez l’autre joueur');
+  assert.equal((await call(guesser, 'paint:draw', { op: { t: 'c' } })).ok, false);
+  const sync = await call(guesser, 'paint:sync');
+  assert.equal(sync.ops.length, 1);
+  assert.equal((await call(guesser, 'paint:guess', { text: word })).ok, true);
+  await waitFor(() => last(guesser)?.state === 'paint-end');
+  assert.equal(last(guesser).game.paint.result.word, word);
+  alice.close();
+  bob.close();
 });

@@ -13,6 +13,10 @@ COPY src ./src
 COPY public ./public
 COPY admin ./admin
 COPY data/questions.json ./data/questions.json
+COPY data/mculture ./data/mculture
+COPY data/imposteur.json ./data/imposteur.json
+COPY data/justeprix.json ./data/justeprix.json
+COPY data/paint.json ./data/paint.json
 COPY version.json ./
 
 # Dossier des images Top Meme, accessible en écriture par l'utilisateur non-root "node".

@@ -6,9 +6,14 @@ import { normalizeCode } from './names.js';
 export const DISCONNECT_GRACE_MS = 90_000;
 
 export class LobbyManager {
-  constructor({ questionBank, memeLibrary = null, graceMs = DISCONNECT_GRACE_MS }) {
+  constructor({ questionBank, memeLibrary = null, quizBank = null, wordBank = null, justePrixBank = null, paintWords = null, graceMs = DISCONNECT_GRACE_MS }) {
     this.questionBank = questionBank;
     this.memeLibrary = memeLibrary;
+    this.quizBank = quizBank;
+    this.wordBank = wordBank;
+    this.justePrixBank = justePrixBank;
+    this.paintWords = paintWords;
+    this.onLobbyChange = null; // branché par les handlers socket (diffusion de l'état)
     this.graceMs = graceMs;
     this.lobbies = new Map();
   }
@@ -19,7 +24,8 @@ export class LobbyManager {
 
   create() {
     const code = generateCode((candidate) => this.lobbies.has(candidate));
-    const lobby = new Lobby(code, { questionBank: this.questionBank, memeLibrary: this.memeLibrary });
+    const lobby = new Lobby(code, { questionBank: this.questionBank, memeLibrary: this.memeLibrary, quizBank: this.quizBank, wordBank: this.wordBank, justePrixBank: this.justePrixBank, paintWords: this.paintWords });
+    lobby.onChange = (changed) => this.onLobbyChange?.(changed);
     this.lobbies.set(code, lobby);
     return lobby;
   }
@@ -30,6 +36,7 @@ export class LobbyManager {
 
   deleteIfEmpty(lobby) {
     if (!lobby.isEmpty) return false;
+    lobby.dispose();
     this.lobbies.delete(lobby.code);
     return true;
   }
@@ -46,7 +53,10 @@ export class LobbyManager {
           touched = true;
         }
       }
-      if (lobby.isEmpty) this.lobbies.delete(lobby.code);
+      if (lobby.isEmpty) {
+        lobby.dispose();
+        this.lobbies.delete(lobby.code);
+      }
       else if (touched) changed.push(lobby);
     }
     return changed;

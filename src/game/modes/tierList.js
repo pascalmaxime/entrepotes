@@ -44,7 +44,9 @@ export default {
       // À points égaux, celui qui a le plus de Top 1 passe devant.
       .sort((a, b) => b.points - a.points || b.firsts - a.firsts);
     assignRanks(ranking, (e) => `${e.points}:${e.firsts}`);
-    return { type: ID, ranking, totalVotes: votes.size };
+    // Le classement complet de chaque joueur, révélé avec les résultats.
+    const details = [...votes].map(([voterId, order]) => ({ voterId, ranking: order.filter((id) => stats.has(id)) }));
+    return { type: ID, ranking, totalVotes: votes.size, details };
   },
 
   scoreDelta(result) {

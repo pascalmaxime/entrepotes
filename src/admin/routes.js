@@ -1,5 +1,6 @@
 import express from 'express';
 import { fileURLToPath } from 'node:url';
+import { GameError } from '../game/errors.js';
 
 const VIEWS = new URL('../../admin/', import.meta.url);
 const view = (name) => fileURLToPath(new URL(name, VIEWS));
@@ -47,6 +48,22 @@ export function createAdminRouter({ auth, memeLibrary }) {
 
   router.get('/', (req, res) => res.sendFile(view('index.html')));
   router.get('/admin.js', (req, res) => res.sendFile(view('admin.js')));
+  router.get('/import.js', (req, res) => res.sendFile(view('import.js')));
+
+  // Import d'images par l'admin (pack de templates…) : mêmes contrôles que pour les joueurs, sans limite.
+  router.post('/api/images', express.raw({ type: 'image/jpeg', limit: '4mb' }), async (req, res) => {
+    if (req.get('x-admin-request') !== '1') return res.status(403).json({ ok: false, message: 'Requête refusée.' });
+    if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
+      return res.status(400).json({ ok: false, message: 'Image manquante ou format non supporté.' });
+    }
+    try {
+      const { entry, duplicate } = await memeLibrary.add(req.body, { uploadedBy: 'admin' });
+      res.json({ ok: true, id: entry.id, duplicate, count: memeLibrary.count });
+    } catch (error) {
+      if (error instanceof GameError) return res.status(400).json({ ok: false, message: error.message });
+      throw error;
+    }
+  });
 
   router.get('/api/library', (req, res) => {
     res.json({ ok: true, stats: memeLibrary.stats(), images: memeLibrary.list() });

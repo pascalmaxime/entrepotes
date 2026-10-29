@@ -1,13 +1,17 @@
 /* global io */
 import { h } from './dom.js';
 import { VOTE_CHOICES, createMemeEditor, prepareImage, renderMeme } from './meme.js';
+import { buildQuizScreen, quizScreenKey, renderQuizRecap, renderQuizSettings, renderReview } from './mculture.js';
+import { buildImpostorScreen, impostorScreenKey, renderImpostorSettings } from './imposteur.js';
+import { buildJustePrixScreen, justePrixScreenKey, renderJustePrixSettings } from './justeprix.js';
+import { attachPaintSocket, buildPaintScreen, paintScreenKey, renderPaintSettings } from './paint.js';
 
 const SESSION_KEY = 'entre-potes:session'; // sessionStorage : un joueur par onglet (pratique pour tester à plusieurs)
 const NAME_KEY = 'entre-potes:name';
 const SEEN_VERSION_KEY = 'entre-potes:seen-version';
 const TIER_COLORS = ['var(--tier-1)', 'var(--tier-2)', 'var(--tier-3)', 'var(--tier-4)', 'var(--tier-5)'];
 const AVATAR_COLORS = ['#ff5ca8', '#4fd1ff', '#ffd23f', '#4ade80', '#fb923c', '#a78bfa', '#2dd4bf', '#f87171', '#60a5fa', '#f472b6'];
-const MODE_ICONS = { 'qui-de-nous': '🫵', 'tier-list': '🏆', 'top-meme': '🖼️' };
+const MODE_ICONS = { 'qui-de-nous': '🫵', 'tier-list': '🏆', 'top-meme': '🖼️', 'm-culture': '🧠', imposteur: '🕵️', 'juste-prix': '💰', paint: '🎨' };
 
 const socket = io();
 
@@ -22,11 +26,12 @@ const state = {
   showDetails: false,
   phaseKey: null,
   entering: false,
-  memeScreen: null, // écran Top Meme affiché (éditeur ou vote), conservé entre deux messages du serveur
+  memeScreen: null, // écran Top Meme / M-Culture affiché, conservé entre deux messages du serveur
   memeEditing: false,
   memeDraft: null,
   memeVote: null,
   uploading: null,
+  quizUi: { editing: false },
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -227,18 +232,31 @@ function render() {
   els.home.hidden = inGame;
   els.game.hidden = !inGame;
   if (!inGame) {
+    document.querySelector('.app')?.classList.remove('is-wide');
     state.memeScreen = null;
     renderModeCards();
     return;
   }
   const { lobby } = state;
 
-  // Top Meme : l'éditeur et le vote ne sont PAS reconstruits à chaque message du serveur
-  // (sinon on perdrait le texte en cours de saisie ou le glisser-déposer). On ne met à jour
-  // que la zone d'avancement, sauf si l'écran doit vraiment changer.
-  const memeView = { create: buildMemeCreate, vote: buildMemeVote }[lobby.state];
+  // Top Meme et M-Culture : l'éditeur, le vote et la saisie ne sont PAS reconstruits à chaque
+  // message du serveur (sinon on perdrait le texte en cours de saisie ou le glisser-déposer).
+  // On ne met à jour que la zone d'avancement, sauf si l'écran doit vraiment changer.
+  const kind = lobby.game?.kind;
+  const isQuiz = kind === 'quiz';
+  const isImpostor = kind === 'impostor' && lobby.state !== 'finished' && lobby.state !== 'lobby';
+  let memeView;
+  const isJustePrix = kind === 'juste-prix' && ['jp-question', 'jp-reveal'].includes(lobby.state);
+  const isPaint = kind === 'paint' && ['paint-choose', 'paint-draw', 'paint-end'].includes(lobby.state);
+  // Paint a besoin de place : chat à gauche, tableau au milieu, joueurs à droite sur grand écran.
+  document.querySelector('.app')?.classList.toggle('is-wide', isPaint);
+  if (isPaint) memeView = (current) => buildPaintScreen(current, quizContext);
+  else if (isJustePrix) memeView = (current) => buildJustePrixScreen(current, quizContext, state.quizUi);
+  else if (isImpostor) memeView = (current) => buildImpostorScreen(current, quizContext);
+  else if (isQuiz) memeView = { quiz: (current) => buildQuizScreen(current, quizContext, state.quizUi) }[lobby.state];
+  else memeView = { create: buildMemeCreate, vote: buildMemeVote }[lobby.state];
   if (memeView) {
-    const key = memeScreenKey(lobby);
+    const key = isPaint ? paintScreenKey(lobby) : isJustePrix ? justePrixScreenKey(lobby, state.quizUi) : isImpostor ? impostorScreenKey(lobby) : isQuiz ? quizScreenKey(lobby, state.quizUi) : memeScreenKey(lobby);
     if (state.memeScreen?.key !== key || !els.gameView.contains(state.memeScreen.el)) {
       const screen = memeView(lobby);
       state.memeScreen = { key, ...screen };
@@ -251,7 +269,13 @@ function render() {
   state.memeScreen = null;
 
   const isMeme = lobby.game?.kind === 'meme';
-  const views = { lobby: renderLobby, question: renderQuestion, results: isMeme ? renderMemeResults : renderResults, finished: renderFinal };
+  const views = {
+    lobby: renderLobby,
+    question: renderQuestion,
+    results: isMeme ? renderMemeResults : renderResults,
+    review: (current) => renderReview(current, quizContext),
+    finished: renderFinal,
+  };
   const view = views[lobby.state] ?? renderLobby;
   els.gameView.replaceChildren(renderTopBar(), view(lobby));
   playEntering();
@@ -303,8 +327,12 @@ function renderTopBar() {
     'div',
     { class: 'topbar' },
     h('button', { type: 'button', class: 'chip chip-code', title: 'Partager le lien', onClick: () => shareInvite(lobby.code) }, lobby.code),
-    h('span', { class: 'chip' }, `${MODE_ICONS[mode.id] ?? ''} ${mode.label}`),
-    inProgress ? h('span', { class: 'chip', title: lobby.game.kind === 'meme' ? 'Manche en cours' : 'Question en cours' }, `${lobby.game.kind === 'meme' ? 'M' : 'Q'}${lobby.game.round}/${lobby.game.totalRounds}`) : null,
+    // Pendant la partie : juste l'icône du mode, pour que la barre tienne sur une ligne.
+    h('span', { class: 'chip', title: mode.label }, inProgress ? (MODE_ICONS[mode.id] ?? mode.label) : `${MODE_ICONS[mode.id] ?? ''} ${mode.label}`),
+    inProgress && lobby.state !== 'review'
+      ? h('span', { class: 'chip', title: ['meme', 'impostor', 'paint'].includes(lobby.game.kind) ? 'Manche en cours' : 'Question en cours' }, `${['meme', 'impostor', 'paint'].includes(lobby.game.kind) ? 'M' : 'Q'}${lobby.game.round}/${lobby.game.totalRounds}`)
+      : null,
+    lobby.state === 'review' ? h('span', { class: 'chip' }, '✏️ Correction') : null,
     h('button', { type: 'button', class: 'chip chip-leave', onClick: confirmLeave }, 'Quitter'),
   );
 }
@@ -349,7 +377,9 @@ function renderLobby(lobby) {
       host
         ? renderModePicker(lobby)
         : h('p', { class: 'mode-readonly' }, h('strong', {}, `${MODE_ICONS[mode.id] ?? ''} ${mode.label}`), h('br'), mode.description),
-      renderRounds(lobby, host),
+      lobby.mode === 'm-culture' ? renderQuizSettings(lobby, host, quizContext) : lobby.mode === 'paint' ? renderPaintSettings(lobby, host, quizContext) : renderRounds(lobby, host),
+      lobby.mode === 'imposteur' ? renderImpostorSettings(lobby, host, quizContext) : null,
+      lobby.mode === 'juste-prix' ? renderJustePrixSettings(lobby, host, quizContext) : null,
     ),
     isMeme ? renderLibraryCard(lobby) : null,
     host
@@ -406,7 +436,7 @@ function renderRounds(lobby, host) {
   return h(
     'div',
     { class: 'rounds' },
-    h('span', { class: 'rounds-label' }, lobby.mode === 'top-meme' ? 'Nombre de manches' : 'Nombre de questions'),
+    h('span', { class: 'rounds-label' }, ['top-meme', 'imposteur'].includes(lobby.mode) ? 'Nombre de manches' : 'Nombre de questions'),
     host
       ? h(
           'div',
@@ -618,6 +648,53 @@ function renderSingleResult(result) {
 
 function renderTierResult(result) {
   const total = result.ranking.length;
+  return h('div', { class: 'stack' }, renderTierBoard(result, total), renderTierDetails(result, total));
+}
+
+// Le classement de chaque joueur : « Maxime a mis Top 1 Clément, Top 2 Victor… »
+function renderTierDetails(result, total) {
+  const details = result.details ?? [];
+  if (!details.length) return null;
+  return h(
+    'section',
+    { class: 'card' },
+    h(
+      'button',
+      { type: 'button', class: 'link-btn link-btn-top', onClick: () => { state.showDetails = !state.showDetails; render(); } },
+      state.showDetails ? 'Masquer les classements' : 'Voir le classement de chacun 👀',
+    ),
+    state.showDetails
+      ? h(
+          'div',
+          { class: 'voter-rankings' },
+          details.map(({ voterId, ranking }) => {
+            const voter = getPlayer(voterId);
+            return h(
+              'div',
+              { class: 'voter-ranking' },
+              h('div', { class: 'voter-head' }, avatar(voter, 'sm'), h('strong', {}, voter.id === state.me ? 'Ton classement' : `Le classement de ${voter.name}`)),
+              h(
+                'ol',
+                { class: 'voter-list' },
+                ranking.map((playerId, index) => {
+                  const p = getPlayer(playerId);
+                  return h(
+                    'li',
+                    { class: playerId === voterId ? 'is-self' : '' },
+                    h('span', { class: 'voter-rank', style: `--tier:${tierColor(index + 1, total)}` }, `TOP ${index + 1}`),
+                    avatar(p, 'sm'),
+                    h('span', { class: 'voter-name' }, p.name, playerId === voterId ? h('span', { class: 'you' }, ' (lui-même)') : null),
+                  );
+                }),
+              ),
+            );
+          }),
+        )
+      : null,
+  );
+}
+
+function renderTierBoard(result, total) {
   return h(
     'section',
     { class: 'tier-board' },
@@ -646,7 +723,11 @@ function renderFinal(lobby) {
   const { final } = lobby.game;
   const isTier = final.type === 'tier-list';
   const isMeme = final.type === 'top-meme';
-  const unit = (n) => (isTier || isMeme ? plural(n, 'pt', 'pts') : plural(n, 'vote', 'votes'));
+  const isQuiz = final.type === 'm-culture';
+  const isImpostor = final.type === 'imposteur';
+  const isJustePrix = final.type === 'juste-prix';
+  const isPaint = final.type === 'paint';
+  const unit = (n) => (isTier || isMeme || isQuiz || isImpostor || isJustePrix || isPaint ? plural(n, 'pt', 'pts') : plural(n, 'vote', 'votes'));
   const [first, second, third] = final.ranking;
   const podium = [[second, 2], [first, 1], [third, 3]].filter(([entry]) => entry);
 
@@ -657,7 +738,7 @@ function renderFinal(lobby) {
       'section',
       { class: 'question-card is-compact' },
       h('span', { class: 'eyebrow' }, 'Fin de la partie'),
-      h('h1', { class: 'question' }, isMeme ? 'Les rois du meme' : isTier ? 'Classement général' : 'Les plus désignés de la partie'),
+      h('h1', { class: 'question' }, isPaint ? 'Les Picasso de la soirée' : isJustePrix ? 'Les rois de l’estimation' : isImpostor ? 'Les meilleurs menteurs' : isQuiz ? 'Les cerveaux de la soirée' : isMeme ? 'Les rois du meme' : isTier ? 'Classement général' : 'Les plus désignés de la partie'),
     ),
     h(
       'section',
@@ -689,11 +770,13 @@ function renderFinal(lobby) {
     ),
     isMeme
       ? renderMemeRecap(final)
+      : isQuiz || isJustePrix || isPaint
+      ? renderQuizRecap(final, quizContext)
       : final.recap.length
       ? h(
           'section',
           { class: 'card' },
-          h('h2', {}, 'Récap des questions'),
+          h('h2', {}, isImpostor ? 'Récap des manches' : 'Récap des questions'),
           h(
             'ul',
             { class: 'recap' },
@@ -1106,6 +1189,20 @@ function toggleVersion(force) {
   }
 }
 
+// Ce dont le module M-Culture a besoin (défini ici pour partager les mêmes helpers).
+const quizContext = {
+  action,
+  emit,
+  toast,
+  avatar,
+  getPlayer,
+  isHost,
+  renderProgress,
+  renderWaiting,
+  rerender: () => render(),
+  me: () => state.me,
+};
+
 // ---------------------------------------------------------------------------
 // Connexion temps réel
 // ---------------------------------------------------------------------------
@@ -1127,12 +1224,14 @@ socket.on('connect', async () => {
   toast(['LOBBY_NOT_FOUND', 'RECONNECT_FAILED'].includes(res.error) ? 'Ta dernière partie n’est plus disponible.' : res.message, 'error');
 });
 
+attachPaintSocket(socket);
+
 socket.on('disconnect', () => {
   if (state.lobby) els.banner.hidden = false;
 });
 
 socket.on('lobby:state', (next) => {
-  const key = next.game ? `${next.state}:${next.game.round}` : next.state;
+  const key = next.game ? `${next.state}:${next.game.round}:${next.game.review?.index ?? ''}` : next.state;
   if (key !== state.phaseKey) {
     state.phaseKey = key;
     state.draftRanking = [];
@@ -1141,6 +1240,7 @@ socket.on('lobby:state', (next) => {
     state.memeEditing = false;
     state.memeDraft = null;
     state.memeVote = null;
+    state.quizUi = { editing: false };
     state.entering = true;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

@@ -6,6 +6,10 @@ import { Server } from 'socket.io';
 import { GameError } from './game/errors.js';
 import { LobbyManager } from './game/LobbyManager.js';
 import { loadQuestionBank } from './game/questionBank.js';
+import { loadQuizBank } from './mculture/quizBank.js';
+import { loadWordBank } from './imposteur/wordBank.js';
+import { loadJustePrixBank } from './justeprix/engine.js';
+import { loadPaintWords } from './paint/engine.js';
 import { MODE_CATALOG } from './game/modes/index.js';
 import { MemeLibrary } from './memes/MemeLibrary.js';
 import { createAdminAuth } from './admin/auth.js';
@@ -19,6 +23,10 @@ export const PATHS = {
   memes: fileURLToPath(new URL('data/memes/', ROOT)),
   version: new URL('version.json', ROOT),
   questions: new URL('data/questions.json', ROOT),
+  mculture: new URL('data/mculture/', ROOT),
+  imposteur: new URL('data/imposteur.json', ROOT),
+  justePrix: new URL('data/justeprix.json', ROOT),
+  paint: new URL('data/paint.json', ROOT),
 };
 
 const MAX_UPLOADS_PER_PLAYER = 50;
@@ -41,6 +49,10 @@ async function readVersion(fileUrl) {
 
 export function createApp({
   questionBank = loadQuestionBank(PATHS.questions),
+  quizBank = loadQuizBank(PATHS.mculture),
+  wordBank = loadWordBank(PATHS.imposteur),
+  justePrixBank = loadJustePrixBank(PATHS.justePrix),
+  paintWords = loadPaintWords(PATHS.paint),
   versionFile = PATHS.version,
   memeLibrary,
   admin,
@@ -63,7 +75,7 @@ export function createApp({
   app.disable('x-powered-by');
   const httpServer = createServer(app);
   const io = new Server(httpServer);
-  const manager = new LobbyManager({ questionBank, memeLibrary: library, graceMs });
+  const manager = new LobbyManager({ questionBank, memeLibrary: library, quizBank, wordBank, justePrixBank, paintWords, graceMs });
   const { broadcast } = registerSocketHandlers(io, manager);
 
   app.use(express.static(PATHS.public));

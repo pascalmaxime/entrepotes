@@ -137,5 +137,6 @@
     render();
   });
 
+  window.adminReload = load; // utilisé par l'import d'images
   load().catch((error) => console.error(error));
 })();

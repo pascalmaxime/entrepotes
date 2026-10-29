@@ -44,6 +44,11 @@
           <h2>Toutes les images</h2>
           <p class="muted">Les plus récentes en premier. Clique sur une image pour l’ouvrir en grand.</p>
         </div>
+        <div class="import-box">
+          <button type="button" class="primary" id="import-btn">📥 Importer des images</button>
+          <input type="file" id="import-input" accept="image/*" multiple hidden>
+          <span class="muted" id="import-status" aria-live="polite">Sélectionne plusieurs images d’un coup (pack de templates…).</span>
+        </div>
       </div>
       <div class="grid" id="all"></div>
       <button type="button" class="ghost more" id="more" hidden>Voir plus</button>
@@ -51,5 +56,6 @@
   </main>
 
   <script src="/admin/admin.js"></script>
+  <script type="module" src="/admin/import.js"></script>
 </body>
 </html>

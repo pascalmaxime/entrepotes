@@ -1,10 +1,15 @@
 import quiDeNous from './quiDeNous.js';
 import tierList from './tierList.js';
 import topMeme from './topMeme.js';
+import mCulture from './mCulture.js';
+import imposteur from './imposteur.js';
+import justePrix from './justePrix.js';
+import paint from './paint.js';
 
 // Pour ajouter un mode : créer son fichier puis l'ajouter à cette liste.
-// kind 'question' : une question + un vote (Qui de nous, Tier List) ; kind 'meme' : Top Meme.
-const PLAYABLE = [quiDeNous, tierList, topMeme];
+// kind 'question' : une question + un vote (Qui de nous, Tier List) ; kind 'meme' : Top Meme ;
+// kind 'quiz' : M-Culture ; kind 'impostor' : L'Imposteur ; kind 'juste-prix' : Le Juste Prix ; kind 'paint' : Paint.
+const PLAYABLE = [quiDeNous, tierList, topMeme, mCulture, imposteur, justePrix, paint];
 
 export const MODES = Object.fromEntries(PLAYABLE.map((mode) => [mode.id, mode]));
 export const DEFAULT_MODE = quiDeNous.id;

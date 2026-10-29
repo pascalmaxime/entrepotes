@@ -16,6 +16,10 @@ export function registerSocketHandlers(io, manager) {
       if (player.connected) io.to(player.socketId).emit('lobby:state', lobby.publicState(player.id));
     }
   };
+  // Changements qui ne viennent pas d'un joueur (fin du chrono M-Culture).
+  manager.onLobbyChange = (lobby) => {
+    if (manager.get(lobby.code) === lobby) broadcast(lobby);
+  };
 
   io.on('connection', (socket) => {
     const on = (event, handler) => {
@@ -136,6 +140,33 @@ export function registerSocketHandlers(io, manager) {
     lobbyAction('meme:reroll', (lobby, playerId) => lobby.rerollTemplate(playerId));
     lobbyAction('meme:submit', (lobby, playerId, { items }) => lobby.submitMeme(playerId, items));
     lobbyAction('meme:votes', (lobby, playerId, { votes }) => lobby.submitMemeVotes(playerId, votes));
+    lobbyAction('jp:answer', (lobby, playerId, payload) => lobby.justePrixAnswer(playerId, payload));
+    lobbyAction('paint:choose', (lobby, playerId, { difficulty }) => lobby.paintChoose(playerId, difficulty));
+    lobbyAction('paint:guess', (lobby, playerId, { text }) => lobby.paintGuess(playerId, text));
+
+    // Dessin en direct : les traits sont relayés aux autres joueurs SANS renvoyer tout l'état du lobby
+    // (trop lourd à chaque coup de crayon). « Annuler » renvoie la liste complète des traits.
+    on('paint:draw', ({ op }) => {
+      const { lobby, playerId } = context();
+      const { op: added, reset } = lobby.paintDraw(playerId, op);
+      const key = lobby.game.index;
+      if (reset) io.to(room(lobby.code)).emit('paint:reset', { key, ops: reset });
+      else socket.to(room(lobby.code)).emit('paint:op', { key, op: added });
+    });
+    // Récupère tout le dessin en cours (arrivée sur l'écran, reconnexion).
+    on('paint:sync', () => {
+      const { lobby } = context();
+      return lobby.paintSync();
+    });
+    lobbyAction('quiz:answer', (lobby, playerId, payload) => lobby.submitAnswer(playerId, payload));
+    lobbyAction('quiz:mark', (lobby, playerId, payload) => lobby.markAnswer(playerId, payload));
+    lobbyAction('quiz:review', (lobby, playerId, payload) => lobby.goToReview(playerId, payload));
+    lobbyAction('quiz:finish', (lobby, playerId) => lobby.finishQuiz(playerId));
+    lobbyAction('imp:ready', (lobby, playerId) => lobby.impostorReady(playerId));
+    lobbyAction('imp:clue', (lobby, playerId, { text }) => lobby.impostorClue(playerId, text));
+    lobbyAction('imp:vote', (lobby, playerId, { target }) => lobby.impostorVote(playerId, target));
+    lobbyAction('imp:guess', (lobby, playerId, { text }) => lobby.impostorGuess(playerId, text));
+    lobbyAction('imp:next', (lobby, playerId) => lobby.impostorNext(playerId));
 
     socket.on('disconnect', () => {
       const { code, playerId } = socket.data;

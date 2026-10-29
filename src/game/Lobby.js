@@ -4,9 +4,18 @@ import { sanitizeName } from './names.js';
 import { assignRanks } from './ranking.js';
 import { DEFAULT_MODE, getMode } from './modes/index.js';
 import topMeme, { MEME_REROLLS } from './modes/topMeme.js';
+import { QUIZ_LIMITS } from './modes/mCulture.js';
+import { CATEGORIES, CATEGORY_IDS } from '../mculture/quizBank.js';
+import { suggestCorrect } from '../mculture/match.js';
+import { CLUE_MODES, effectiveRoles } from './modes/imposteur.js';
+import * as impostor from '../imposteur/engine.js';
+import * as justePrix from '../justeprix/engine.js';
+import * as paint from '../paint/engine.js';
 
 export const MAX_PLAYERS = 12;
 export const ROUNDS_LIMITS = Object.freeze({ min: 1, max: 20, default: 5 });
+// Marge laissée après la fin du chrono pour les réponses envoyées au dernier moment.
+const QUIZ_GRACE_MS = 800;
 
 const OPEN_STATES = new Set(['lobby', 'finished']);
 
@@ -23,16 +32,37 @@ function shuffle(items) {
  * Un lobby = un groupe de joueurs + la partie en cours.
  * Modes "question" (Qui de nous, Tier List) : lobby → question ⇄ results → finished
  * Mode "meme" (Top Meme)                      : lobby → create → vote → results → … → finished
+ * Mode "quiz" (M-Culture)                     : lobby → quiz (toutes les questions) → review (correction) → finished
+ * Mode "impostor" (L'Imposteur)               : lobby → reveal → clues ⇄ ballot → elimination → … → round-end → … → finished
  */
 export class Lobby {
-  constructor(code, { questionBank, memeLibrary = null }) {
+  constructor(code, { questionBank, memeLibrary = null, quizBank = null, wordBank = null, justePrixBank = null, paintWords = null }) {
     this.code = code;
     this.questionBank = questionBank;
     this.memeLibrary = memeLibrary;
+    this.quizBank = quizBank;
+    this.onChange = null; // appelé quand l'état change tout seul (fin du chrono)
+    this.quizTimer = null;
+    this.usedQuiz = new Set();
+    this.wordBank = wordBank;
+    this.usedPairs = new Set();
+    this.justePrixBank = justePrixBank;
+    this.usedJustePrix = new Set();
+    this.paintWords = paintWords;
+    this.usedPaintWords = new Set();
+    this.extraTimers = []; // chronos secondaires (indices de Paint…)
     this.players = new Map();
     this.hostId = null;
     this.mode = DEFAULT_MODE;
-    this.settings = { rounds: ROUNDS_LIMITS.default };
+    this.settings = {
+      rounds: ROUNDS_LIMITS.default,
+      questions: QUIZ_LIMITS.questions.default,
+      timer: QUIZ_LIMITS.defaultTimer,
+      categories: [...CATEGORY_IDS],
+      impostor: { impostors: 1, whites: 1, clueMode: 'ecrit' },
+      justePrix: { categories: [...justePrix.JP_CATEGORY_IDS], timer: QUIZ_LIMITS.defaultTimer },
+      paint: { turns: paint.PAINT_LIMITS.turns.default, timer: paint.PAINT_LIMITS.defaultTimer },
+    };
     this.state = 'lobby';
     this.game = null;
     this.usedQuestions = new Set();
@@ -116,6 +146,10 @@ export class Lobby {
       this.game.assignments?.delete(playerId);
       this.game.submissions?.delete(playerId);
       this.game.memeVotes?.delete(playerId);
+      for (const responses of this.game.responses ?? []) responses.delete(playerId);
+      if (this.game.kind === 'impostor') impostor.impostorPlayerGone(this, playerId);
+      if (this.game.kind === 'juste-prix') justePrix.playerGone(this, playerId);
+      if (this.game.kind === 'paint') paint.playerGone(this, playerId);
     }
     if (this.hostId === playerId) this.transferHost();
     if (this.isEmpty) this.hostId = null;
@@ -149,12 +183,74 @@ export class Lobby {
     this.mode = modeId;
   }
 
-  setSettings(playerId, { rounds } = {}) {
+  // Chaque réglage est facultatif : on ne modifie que ce qui est envoyé.
+  setSettings(playerId, { rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer } = {}) {
     this.assertHost(playerId);
     this.assertOpen('Impossible de modifier les réglages pendant une partie.');
-    const value = Number.parseInt(rounds, 10);
-    if (!Number.isFinite(value)) throw new GameError('INVALID_SETTINGS', 'Nombre de manches invalide.');
-    this.settings.rounds = Math.min(ROUNDS_LIMITS.max, Math.max(ROUNDS_LIMITS.min, value));
+    const next = { ...this.settings };
+    const int = (value, label) => {
+      const parsed = Number.parseInt(value, 10);
+      if (!Number.isFinite(parsed)) throw new GameError('INVALID_SETTINGS', `${label} invalide.`);
+      return parsed;
+    };
+    if (rounds !== undefined) {
+      next.rounds = Math.min(ROUNDS_LIMITS.max, Math.max(ROUNDS_LIMITS.min, int(rounds, 'Nombre de manches')));
+    }
+    if (questions !== undefined) {
+      const { min, max } = QUIZ_LIMITS.questions;
+      next.questions = Math.min(max, Math.max(min, int(questions, 'Nombre de questions')));
+    }
+    if (timer !== undefined) {
+      const value = int(timer, 'Chrono');
+      if (!QUIZ_LIMITS.timers.includes(value)) throw new GameError('INVALID_SETTINGS', 'Durée de chrono invalide.');
+      next.timer = value;
+    }
+    if (categories !== undefined) {
+      if (!Array.isArray(categories)) throw new GameError('INVALID_SETTINGS', 'Catégories invalides.');
+      next.categories = CATEGORY_IDS.filter((id) => categories.includes(id));
+      if (next.categories.length === 0) throw new GameError('INVALID_SETTINGS', 'Garde au moins une catégorie.');
+    }
+    if (impostors !== undefined || whites !== undefined || clueMode !== undefined) {
+      const wanted = { ...next.impostor };
+      if (impostors !== undefined) wanted.impostors = int(impostors, 'Nombre d’imposteurs');
+      if (whites !== undefined) wanted.whites = int(whites, 'Nombre de Mr. White');
+      if (clueMode !== undefined) {
+        if (!CLUE_MODES.includes(clueMode)) throw new GameError('INVALID_SETTINGS', 'Mode d’indices invalide.');
+        wanted.clueMode = clueMode;
+      }
+      // On garde des valeurs possibles pour le nombre de joueurs actuel (au moins 4 pour le calcul).
+      const roles = effectiveRoles(wanted, Math.max(4, this.players.size));
+      next.impostor = { ...wanted, impostors: roles.impostors, whites: roles.whites };
+    }
+    if (jpCategories !== undefined || jpTimer !== undefined) {
+      const jp = { ...next.justePrix };
+      if (jpCategories !== undefined) {
+        if (!Array.isArray(jpCategories)) throw new GameError('INVALID_SETTINGS', 'Catégories invalides.');
+        jp.categories = justePrix.JP_CATEGORY_IDS.filter((id) => jpCategories.includes(id));
+        if (jp.categories.length === 0) throw new GameError('INVALID_SETTINGS', 'Garde au moins une catégorie.');
+      }
+      if (jpTimer !== undefined) {
+        const value = int(jpTimer, 'Chrono');
+        if (!QUIZ_LIMITS.timers.includes(value)) throw new GameError('INVALID_SETTINGS', 'Durée de chrono invalide.');
+        jp.timer = value;
+      }
+      next.justePrix = jp;
+    }
+    if (paintTurns !== undefined || paintTimer !== undefined) {
+      const p = { ...next.paint };
+      const { min, max } = paint.PAINT_LIMITS.turns;
+      if (paintTurns !== undefined) p.turns = Math.min(max, Math.max(min, int(paintTurns, 'Nombre de tours')));
+      if (paintTimer !== undefined) {
+        const value = int(paintTimer, 'Chrono');
+        if (!paint.PAINT_LIMITS.timers.includes(value)) throw new GameError('INVALID_SETTINGS', 'Durée de chrono invalide (60 s minimum).');
+        p.timer = value;
+      }
+      next.paint = p;
+    }
+    if ([rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer].every((v) => v === undefined)) {
+      throw new GameError('INVALID_SETTINGS', 'Aucun réglage à modifier.');
+    }
+    this.settings = next;
   }
 
   // --- Lancement de la partie ------------------------------------------------------
@@ -170,6 +266,28 @@ export class Lobby {
       );
     }
     const base = { modeId: mode.id, kind: mode.kind, index: 0, result: null, history: [], totals: {}, final: null };
+
+    if (mode.kind === 'quiz') {
+      this.startQuiz(base);
+      return;
+    }
+
+    if (mode.kind === 'juste-prix') {
+      justePrix.startJustePrix(this, base);
+      return;
+    }
+
+    if (mode.kind === 'paint') {
+      if (!this.paintWords) throw new GameError('NO_WORDS', 'Aucune liste de mots disponible.');
+      paint.startPaint(this, base);
+      return;
+    }
+
+    if (mode.kind === 'impostor') {
+      if (!this.wordBank) throw new GameError('NO_WORDS', 'Aucune liste de mots disponible.');
+      impostor.startImpostorGame(this, base);
+      return;
+    }
 
     if (mode.kind === 'meme') {
       if (!this.memeLibrary?.count) {
@@ -190,6 +308,10 @@ export class Lobby {
     if (this.state === 'question') return this.checkAllVoted();
     if (this.state === 'create') return this.checkAllSubmitted();
     if (this.state === 'vote') return this.checkAllMemeVoted();
+    if (this.state === 'quiz') return this.checkAllAnswered();
+    if (this.state === 'jp-question') return justePrix.checkAllAnswered(this);
+    if (this.game?.kind === 'paint') return paint.progress(this);
+    if (this.game?.kind === 'impostor') return impostor.checkImpostorProgress(this);
     return false;
   }
 
@@ -340,6 +462,197 @@ export class Lobby {
     this.state = 'results';
   }
 
+  // --- Mode "quiz" (M-Culture) -------------------------------------------------------------
+
+  startQuiz(base) {
+    const questions = this.quizBank?.pick({ categories: this.settings.categories, count: this.settings.questions }, this.usedQuiz) ?? [];
+    if (questions.length === 0) {
+      throw new GameError('NO_QUESTIONS', 'Aucune question disponible dans les catégories choisies.');
+    }
+    this.clearQuizTimer();
+    this.game = {
+      ...base,
+      questions,
+      totalRounds: questions.length,
+      timer: this.settings.timer,
+      responses: questions.map(() => new Map()), // par question : joueur → { text, locked }
+      marks: null,
+      reviewIndex: 0,
+      deadline: null,
+    };
+    this.state = 'quiz';
+    this.openQuizQuestion();
+  }
+
+  openQuizQuestion() {
+    const { game } = this;
+    this.clearQuizTimer();
+    game.deadline = game.timer > 0 ? Date.now() + game.timer * 1000 : null;
+    if (game.deadline) {
+      const index = game.index;
+      this.quizTimer = setTimeout(() => {
+        this.quizTimer = null;
+        if (this.state !== 'quiz' || this.game?.index !== index) return;
+        this.advanceQuiz();
+        this.onChange?.(this);
+      }, game.timer * 1000 + QUIZ_GRACE_MS);
+      this.quizTimer.unref?.();
+    }
+  }
+
+  clearQuizTimer() {
+    if (this.quizTimer) clearTimeout(this.quizTimer);
+    this.quizTimer = null;
+    for (const timer of this.extraTimers ?? []) clearTimeout(timer);
+    this.extraTimers = [];
+  }
+
+  // `final` : le joueur a cliqué sur « Valider ». Sinon c'est un brouillon (envoyé pendant la saisie,
+  // pour que la réponse compte même si le chrono tombe avant la validation).
+  submitAnswer(playerId, { index, text, final = true } = {}) {
+    if (this.state !== 'quiz') throw new GameError('NOT_ANSWERING', 'Ce n’est plus le moment de répondre.');
+    if (index !== this.game.index) throw new GameError('TOO_LATE', 'Trop tard, on est passé à la question suivante !');
+    if (typeof text !== 'string') throw new GameError('INVALID_ANSWER', 'Réponse invalide.');
+    const clean = text.replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, QUIZ_LIMITS.answerMax);
+    if (final && !clean) throw new GameError('EMPTY_ANSWER', 'Écris une réponse (ou attends la fin du chrono).');
+    this.game.responses[index].set(playerId, { text: clean, locked: Boolean(final) });
+    this.checkAllAnswered();
+  }
+
+  checkAllAnswered() {
+    if (this.state !== 'quiz') return false;
+    const responses = this.game.responses[this.game.index];
+    const players = this.connectedPlayers;
+    if (players.length === 0 || !players.every((p) => responses.get(p.id)?.locked)) return false;
+    this.advanceQuiz();
+    return true;
+  }
+
+  advanceQuiz() {
+    const { game } = this;
+    if (game.index + 1 >= game.totalRounds) {
+      this.startReview();
+      return;
+    }
+    game.index += 1;
+    this.openQuizQuestion();
+  }
+
+  // Correction : chaque réponse est pré-cochée si elle ressemble à la bonne, l'hôte ajuste.
+  startReview() {
+    const { game } = this;
+    this.clearQuizTimer();
+    game.deadline = null;
+    game.marks = game.questions.map((question, index) => {
+      const marks = new Map();
+      for (const [playerId, { text }] of game.responses[index]) marks.set(playerId, suggestCorrect(question, text));
+      return marks;
+    });
+    game.reviewIndex = 0;
+    this.state = 'review';
+  }
+
+  markAnswer(playerId, { index, playerId: targetId, correct } = {}) {
+    this.assertHost(playerId);
+    if (this.state !== 'review') throw new GameError('NOT_REVIEWING', 'La correction n’a pas commencé.');
+    if (!Number.isInteger(index) || index < 0 || index >= this.game.totalRounds) {
+      throw new GameError('INVALID_MARK', 'Question inconnue.');
+    }
+    if (!this.game.responses[index].get(targetId)?.text) throw new GameError('INVALID_MARK', 'Ce joueur n’a pas répondu.');
+    this.game.marks[index].set(targetId, Boolean(correct));
+  }
+
+  goToReview(playerId, { index } = {}) {
+    this.assertHost(playerId);
+    if (this.state !== 'review') throw new GameError('NOT_REVIEWING', 'La correction n’a pas commencé.');
+    if (!Number.isInteger(index) || index < 0 || index >= this.game.totalRounds) {
+      throw new GameError('INVALID_REVIEW', 'Question inconnue.');
+    }
+    this.game.reviewIndex = index;
+  }
+
+  quizScores() {
+    const { game } = this;
+    const totals = {};
+    game.questions.forEach((question, index) => {
+      for (const [playerId, correct] of game.marks?.[index] ?? []) {
+        if (correct) totals[playerId] = (totals[playerId] ?? 0) + question.pts;
+      }
+    });
+    return totals;
+  }
+
+  finishQuiz(playerId) {
+    this.assertHost(playerId);
+    if (this.state !== 'review') throw new GameError('NOT_REVIEWING', 'La correction n’a pas commencé.');
+    const { game } = this;
+    game.totals = this.quizScores();
+    game.history = game.questions.map((question, index) => ({
+      question: quizLabel(question),
+      answer: question.answer ?? '',
+      pts: question.pts,
+      topPlayerIds: [...game.marks[index]].filter(([, correct]) => correct).map(([id]) => id),
+    }));
+    game.index = game.totalRounds;
+    this.finish();
+  }
+
+  // --- Mode "impostor" (L'Imposteur) -------------------------------------------------------
+
+  // --- Mode "juste-prix" (Le Juste Prix) -----------------------------------------------------
+
+  justePrixAnswer(playerId, payload) {
+    justePrix.submitAnswer(this, playerId, payload);
+  }
+
+  // --- Mode "paint" (Paint) ------------------------------------------------------------------
+
+  paintChoose(playerId, difficulty) {
+    paint.chooseWord(this, playerId, difficulty);
+  }
+
+  paintGuess(playerId, text) {
+    return paint.submitGuess(this, playerId, text);
+  }
+
+  paintDraw(playerId, op) {
+    return paint.draw(this, playerId, op);
+  }
+
+  paintSync() {
+    return paint.syncOps(this);
+  }
+
+  impostorReady(playerId) {
+    impostor.markReady(this, playerId);
+  }
+
+  impostorClue(playerId, text) {
+    impostor.submitClue(this, playerId, text);
+  }
+
+  impostorVote(playerId, targetId) {
+    impostor.submitImpostorVote(this, playerId, targetId);
+  }
+
+  impostorGuess(playerId, text) {
+    impostor.submitGuess(this, playerId, text);
+  }
+
+  impostorNext(playerId) {
+    this.assertHost(playerId);
+    if (this.game?.kind !== 'impostor') throw new GameError('NOT_NOW', 'Pas encore !');
+    if (impostor.impostorNext(this) === 'finish') {
+      this.game.index = this.game.totalRounds;
+      this.finish();
+    }
+  }
+
+  dispose() {
+    this.clearQuizTimer();
+    this.onChange = null;
+  }
+
   // --- Commandes de l'hôte ---------------------------------------------------------------
 
   // Bouton "passer à la suite" : révèle les votes / lance le vote des memes sans attendre les retardataires.
@@ -354,6 +667,14 @@ export class Lobby {
     } else if (this.state === 'vote') {
       if (this.game.memeVotes.size === 0) throw new GameError('NO_VOTES', 'Personne n’a encore voté.');
       this.revealMemes();
+    } else if (this.state === 'quiz') {
+      this.advanceQuiz(); // l'hôte passe la question
+    } else if (['paint-choose', 'paint-draw', 'paint-end'].includes(this.state)) {
+      if (paint.hostSkip(this) === 'finish') this.finish(); // l'hôte passe la manche
+    } else if (this.state === 'jp-question') {
+      justePrix.reveal(this); // l'hôte révèle sans attendre les retardataires
+    } else if (this.game?.kind === 'impostor') {
+      impostor.impostorForce(this);
     } else {
       throw new GameError('NOT_VOTING', 'Rien à révéler pour le moment.');
     }
@@ -361,6 +682,14 @@ export class Lobby {
 
   nextQuestion(playerId) {
     this.assertHost(playerId);
+    if (this.state === 'jp-reveal') {
+      if (justePrix.nextJustePrix(this) === 'finish') this.finish();
+      return;
+    }
+    if (this.state === 'paint-end') {
+      if (paint.hostSkip(this) === 'finish') this.finish();
+      return;
+    }
     if (this.state !== 'results') throw new GameError('NOT_IN_RESULTS', 'Les résultats ne sont pas encore affichés.');
     const { game } = this;
     if (game.index + 1 >= game.totalRounds) {
@@ -398,6 +727,7 @@ export class Lobby {
 
   backToLobby(playerId) {
     this.assertHost(playerId);
+    this.clearQuizTimer();
     this.state = 'lobby';
     this.game = null;
   }
@@ -411,6 +741,12 @@ export class Lobby {
     let votedIds = [];
     if (state === 'question') votedIds = live(game.votes.keys());
     if (state === 'vote') votedIds = live(game.memeVotes.keys());
+    if (state === 'jp-question') votedIds = live(game.answers.keys());
+    if (state === 'paint-draw') votedIds = live(game.manche.found.keys());
+    if (state === 'quiz') {
+      votedIds = live([...game.responses[game.index]].filter(([, r]) => r.locked).map(([id]) => id));
+    }
+    const impostorView = game?.kind === 'impostor' && state !== 'finished' ? impostor.impostorPublic(this) : null;
 
     return {
       code: this.code,
@@ -418,7 +754,7 @@ export class Lobby {
       mode: this.mode,
       settings: { ...this.settings },
       state,
-      limits: { maxPlayers: MAX_PLAYERS, rounds: { ...ROUNDS_LIMITS } },
+      limits: { maxPlayers: MAX_PLAYERS, rounds: { ...ROUNDS_LIMITS }, quiz: this.quizLimits(), impostor: this.impostorLimits(), justePrix: this.justePrixLimits(), paint: this.paintLimits() },
       library: this.memeLibrary ? { count: this.memeLibrary.count } : null,
       players: [...this.players.values()].map(({ id, name, connected }) => ({
         id,
@@ -432,7 +768,7 @@ export class Lobby {
             kind: game.kind,
             round: Math.min(game.index + 1, game.totalRounds),
             totalRounds: game.totalRounds,
-            question: this.currentQuestion,
+            question: ['quiz', 'juste-prix'].includes(game.kind) ? null : this.currentQuestion,
             votedIds,
             submittedIds: state === 'create' ? live(game.submissions.keys()) : [],
             memes:
@@ -444,7 +780,12 @@ export class Lobby {
                       return { id, templateId, items };
                     })
                 : [],
-            result: state === 'results' ? game.result : null,
+            quiz: state === 'quiz' ? this.quizPublic() : null,
+            review: state === 'review' ? this.reviewPublic() : null,
+            impostor: impostorView,
+            justePrix: game.kind === 'juste-prix' ? justePrix.justePrixPublic(this) : null,
+            paint: game.kind === 'paint' ? paint.paintPublic(this, viewerId) : null,
+            result: state === 'results' || state === 'jp-reveal' ? game.result : null,
             final: state === 'finished' ? game.final : null,
           }
         : null,
@@ -455,6 +796,12 @@ export class Lobby {
   // Infos propres à chaque joueur (son image, son meme, s'il a voté).
   privateState(viewerId) {
     const { game } = this;
+    if (viewerId && game?.kind === 'impostor') return this.state === 'finished' ? null : impostor.impostorPrivate(this, viewerId);
+    if (viewerId && game?.kind === 'juste-prix') return justePrix.justePrixPrivate(this, viewerId);
+    if (viewerId && game?.kind === 'quiz' && this.state === 'quiz') {
+      const response = game.responses[game.index].get(viewerId);
+      return { answer: response?.text ?? '', locked: Boolean(response?.locked) };
+    }
     if (!viewerId || game?.kind !== 'meme') return null;
     if (this.state === 'create') {
       const assignment = game.assignments.get(viewerId);
@@ -467,5 +814,107 @@ export class Lobby {
       return { memeId: game.submissions.get(viewerId)?.id ?? null, voted: game.memeVotes.has(viewerId) };
     }
     return null;
+  }
+
+  // Réglages de L'Imposteur : rôles réellement utilisés avec le nombre de joueurs actuel.
+  // Paint : nombre de manches = joueurs connectés × tours, seulement dans le lobby.
+  paintLimits() {
+    if (!OPEN_STATES.has(this.state)) return null;
+    return {
+      turns: { ...paint.PAINT_LIMITS.turns },
+      timers: [...paint.PAINT_LIMITS.timers],
+      players: this.connectedPlayers.length,
+      words: this.paintWords?.counts() ?? {},
+    };
+  }
+
+  // Le Juste Prix : catégories (avec le nombre de questions dispo) et chronos, seulement dans le lobby.
+  justePrixLimits() {
+    if (!OPEN_STATES.has(this.state)) return null;
+    const counts = this.justePrixBank?.counts() ?? {};
+    return {
+      timers: [...QUIZ_LIMITS.timers],
+      categories: justePrix.JP_CATEGORIES.map(({ id, label, emoji }) => ({ id, label, emoji, count: counts[id] ?? 0 })),
+    };
+  }
+
+  impostorLimits() {
+    if (!OPEN_STATES.has(this.state)) return null;
+    const count = this.players.size;
+    const roles = effectiveRoles(this.settings.impostor, Math.max(4, count));
+    return {
+      playerCount: count,
+      impostors: roles.impostors,
+      whites: roles.whites,
+      civils: Math.max(0, count - roles.impostors - roles.whites),
+      impostorsMax: Math.max(1, roles.limits.maxBad - roles.whites),
+      whitesMax: Math.max(0, Math.min(roles.limits.whiteMax, roles.limits.maxBad - 1)),
+    };
+  }
+
+  // Réglages M-Culture (catégories + nombre de questions dispo), seulement dans le lobby.
+  quizLimits() {
+    if (!OPEN_STATES.has(this.state)) return null;
+    const counts = this.quizBank?.counts() ?? {};
+    return {
+      questions: { ...QUIZ_LIMITS.questions },
+      timers: [...QUIZ_LIMITS.timers],
+      categories: CATEGORIES.map(({ id, label, emoji }) => ({ id, label, emoji, count: counts[id] ?? 0 })),
+    };
+  }
+
+  // La question en cours SANS la réponse.
+  quizPublic() {
+    const { game } = this;
+    return {
+      index: game.index,
+      total: game.totalRounds,
+      deadline: game.deadline,
+      serverNow: Date.now(),
+      timer: game.timer,
+      question: publicQuizQuestion(game.questions[game.index]),
+    };
+  }
+
+  reviewPublic() {
+    const { game } = this;
+    const index = game.reviewIndex;
+    const question = game.questions[index];
+    const responses = game.responses[index];
+    return {
+      index,
+      total: game.totalRounds,
+      question: { ...publicQuizQuestion(question), answer: question.answer, alt: question.alt },
+      answers: this.playerIds.map((playerId) => ({
+        playerId,
+        text: responses.get(playerId)?.text ?? '',
+        correct: Boolean(game.marks[index].get(playerId)),
+      })),
+      scores: this.quizScores(),
+      // Pour la frise de navigation : combien de bonnes réponses par question.
+      overview: game.questions.map((q, i) => ({ cat: q.cat, correct: [...game.marks[i].values()].filter(Boolean).length })),
+    };
+  }
+}
+
+function publicQuizQuestion(question) {
+  const { cat, prompt, pts, flag, mapId, emoji, hint, song, letter } = question;
+  return { cat, prompt, pts, flag, mapId, emoji, hint, song, letter };
+}
+
+function quizLabel(question) {
+  switch (question.cat) {
+    case 'drapeaux':
+      return '🚩 Drapeau';
+    case 'carte':
+      return '🗺️ Pays sur la carte';
+    case 'rebus':
+      return `🧩 ${question.emoji}`;
+    case 'musique':
+      return `🎵 « ${question.song.title} »`;
+    case 'petit-bac':
+      return `✏️ ${question.prompt} en ${question.letter}`;
+    default:
+      return question.prompt;
   }
 }
