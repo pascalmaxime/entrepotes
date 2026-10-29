@@ -48,7 +48,7 @@ test('HTTP : santé, version et modes', async () => {
   assert.equal(typeof version.version, 'string');
   assert.ok(Array.isArray(version.notes));
   const modes = await (await fetch(`${url}/api/modes`)).json();
-  assert.deepEqual(modes.map((m) => m.id), ['qui-de-nous', 'tier-list', 'top-meme', 'm-culture', 'imposteur', 'juste-prix', 'paint']);
+  assert.deepEqual(modes.map((m) => m.id), ['qui-de-nous', 'tier-list', 'top-meme', 'm-culture', 'imposteur', 'juste-prix', 'paint', 'loup-garou', 'tic-tac-boum', 'coq-ane']);
   assert.ok(modes.every((m) => m.available));
 });
 

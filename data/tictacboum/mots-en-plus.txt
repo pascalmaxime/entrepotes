@@ -1,0 +1,29 @@
+# Mots acceptés en plus du dictionnaire (noms propres, mots à vous…).
+# Un mot par ligne. Les accents et les majuscules ne comptent pas. Les lignes qui commencent par # sont ignorées.
+# Pris en compte à la partie suivante, sans redémarrer le serveur.
+ASSE
+Sainté
+Saint-Étienne
+Stéphanois
+Stéphanoise
+Geoffroy-Guichard
+Paris
+Lyon
+Marseille
+Lille
+Bordeaux
+Toulouse
+Nantes
+France
+Europe
+Netflix
+YouTube
+TikTok
+Instagram
+Snapchat
+WhatsApp
+PlayStation
+Nintendo
+Pokémon
+Minecraft
+Fortnite

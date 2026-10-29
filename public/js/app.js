@@ -5,13 +5,16 @@ import { buildQuizScreen, quizScreenKey, renderQuizRecap, renderQuizSettings, re
 import { buildImpostorScreen, impostorScreenKey, renderImpostorSettings } from './imposteur.js';
 import { buildJustePrixScreen, justePrixScreenKey, renderJustePrixSettings } from './justeprix.js';
 import { attachPaintSocket, buildPaintScreen, paintScreenKey, renderPaintSettings } from './paint.js';
+import { buildLoupGarouScreen, loupGarouScreenKey, renderLoupGarouFinal, renderLoupGarouSettings } from './loupgarou.js';
+import { buildCoqAneScreen, coqAneScreenKey, renderCoqAneSettings } from './coqane.js';
+import { attachTicTacBoumSocket, buildTicTacBoumScreen, renderTicTacBoumFinal, renderTicTacBoumSettings, ticTacBoumScreenKey } from './tictacboum.js';
 
 const SESSION_KEY = 'entre-potes:session'; // sessionStorage : un joueur par onglet (pratique pour tester à plusieurs)
 const NAME_KEY = 'entre-potes:name';
 const SEEN_VERSION_KEY = 'entre-potes:seen-version';
 const TIER_COLORS = ['var(--tier-1)', 'var(--tier-2)', 'var(--tier-3)', 'var(--tier-4)', 'var(--tier-5)'];
 const AVATAR_COLORS = ['#ff5ca8', '#4fd1ff', '#ffd23f', '#4ade80', '#fb923c', '#a78bfa', '#2dd4bf', '#f87171', '#60a5fa', '#f472b6'];
-const MODE_ICONS = { 'qui-de-nous': '🫵', 'tier-list': '🏆', 'top-meme': '🖼️', 'm-culture': '🧠', imposteur: '🕵️', 'juste-prix': '💰', paint: '🎨' };
+const MODE_ICONS = { 'qui-de-nous': '🫵', 'tier-list': '🏆', 'top-meme': '🖼️', 'm-culture': '🧠', imposteur: '🕵️', 'juste-prix': '💰', paint: '🎨', 'loup-garou': '🐺', 'tic-tac-boum': '💣', 'coq-ane': '🐓' };
 
 const socket = io();
 
@@ -232,7 +235,7 @@ function render() {
   els.home.hidden = inGame;
   els.game.hidden = !inGame;
   if (!inGame) {
-    document.querySelector('.app')?.classList.remove('is-wide');
+    document.querySelector('.app')?.classList.remove('is-wide', 'is-night');
     state.memeScreen = null;
     renderModeCards();
     return;
@@ -249,14 +252,21 @@ function render() {
   const isJustePrix = kind === 'juste-prix' && ['jp-question', 'jp-reveal'].includes(lobby.state);
   const isPaint = kind === 'paint' && ['paint-choose', 'paint-draw', 'paint-end'].includes(lobby.state);
   // Paint a besoin de place : chat à gauche, tableau au milieu, joueurs à droite sur grand écran.
-  document.querySelector('.app')?.classList.toggle('is-wide', isPaint);
-  if (isPaint) memeView = (current) => buildPaintScreen(current, quizContext);
+  const isLoupGarou = kind === 'loup-garou' && lobby.state.startsWith('lg-');
+  const isTicTacBoum = kind === 'tic-tac-boum' && lobby.state.startsWith('tb-');
+  document.querySelector('.app')?.classList.toggle('is-wide', isPaint || isLoupGarou || isTicTacBoum);
+  if (!isLoupGarou) document.querySelector('.app')?.classList.remove('is-night');
+  const isCoqAne = kind === 'coq-ane' && lobby.state.startsWith('cc-');
+  if (isCoqAne) memeView = (current) => buildCoqAneScreen(current, quizContext);
+  else if (isTicTacBoum) memeView = (current) => buildTicTacBoumScreen(current, quizContext);
+  else if (isLoupGarou) memeView = (current) => buildLoupGarouScreen(current, quizContext);
+  else if (isPaint) memeView = (current) => buildPaintScreen(current, quizContext);
   else if (isJustePrix) memeView = (current) => buildJustePrixScreen(current, quizContext, state.quizUi);
   else if (isImpostor) memeView = (current) => buildImpostorScreen(current, quizContext);
   else if (isQuiz) memeView = { quiz: (current) => buildQuizScreen(current, quizContext, state.quizUi) }[lobby.state];
   else memeView = { create: buildMemeCreate, vote: buildMemeVote }[lobby.state];
   if (memeView) {
-    const key = isPaint ? paintScreenKey(lobby) : isJustePrix ? justePrixScreenKey(lobby, state.quizUi) : isImpostor ? impostorScreenKey(lobby) : isQuiz ? quizScreenKey(lobby, state.quizUi) : memeScreenKey(lobby);
+    const key = isCoqAne ? coqAneScreenKey(lobby) : isTicTacBoum ? ticTacBoumScreenKey(lobby) : isLoupGarou ? loupGarouScreenKey(lobby) : isPaint ? paintScreenKey(lobby) : isJustePrix ? justePrixScreenKey(lobby, state.quizUi) : isImpostor ? impostorScreenKey(lobby) : isQuiz ? quizScreenKey(lobby, state.quizUi) : memeScreenKey(lobby);
     if (state.memeScreen?.key !== key || !els.gameView.contains(state.memeScreen.el)) {
       const screen = memeView(lobby);
       state.memeScreen = { key, ...screen };
@@ -329,7 +339,7 @@ function renderTopBar() {
     h('button', { type: 'button', class: 'chip chip-code', title: 'Partager le lien', onClick: () => shareInvite(lobby.code) }, lobby.code),
     // Pendant la partie : juste l'icône du mode, pour que la barre tienne sur une ligne.
     h('span', { class: 'chip', title: mode.label }, inProgress ? (MODE_ICONS[mode.id] ?? mode.label) : `${MODE_ICONS[mode.id] ?? ''} ${mode.label}`),
-    inProgress && lobby.state !== 'review'
+    inProgress && lobby.state !== 'review' && !['loup-garou', 'tic-tac-boum', 'coq-ane'].includes(lobby.game.kind)
       ? h('span', { class: 'chip', title: ['meme', 'impostor', 'paint'].includes(lobby.game.kind) ? 'Manche en cours' : 'Question en cours' }, `${['meme', 'impostor', 'paint'].includes(lobby.game.kind) ? 'M' : 'Q'}${lobby.game.round}/${lobby.game.totalRounds}`)
       : null,
     lobby.state === 'review' ? h('span', { class: 'chip' }, '✏️ Correction') : null,
@@ -377,7 +387,7 @@ function renderLobby(lobby) {
       host
         ? renderModePicker(lobby)
         : h('p', { class: 'mode-readonly' }, h('strong', {}, `${MODE_ICONS[mode.id] ?? ''} ${mode.label}`), h('br'), mode.description),
-      lobby.mode === 'm-culture' ? renderQuizSettings(lobby, host, quizContext) : lobby.mode === 'paint' ? renderPaintSettings(lobby, host, quizContext) : renderRounds(lobby, host),
+      lobby.mode === 'm-culture' ? renderQuizSettings(lobby, host, quizContext) : lobby.mode === 'paint' ? renderPaintSettings(lobby, host, quizContext) : lobby.mode === 'loup-garou' ? renderLoupGarouSettings(lobby, host, quizContext) : lobby.mode === 'tic-tac-boum' ? renderTicTacBoumSettings(lobby, host, quizContext) : lobby.mode === 'coq-ane' ? renderCoqAneSettings(lobby, host, quizContext) : renderRounds(lobby, host),
       lobby.mode === 'imposteur' ? renderImpostorSettings(lobby, host, quizContext) : null,
       lobby.mode === 'juste-prix' ? renderJustePrixSettings(lobby, host, quizContext) : null,
     ),
@@ -727,9 +737,12 @@ function renderFinal(lobby) {
   const isImpostor = final.type === 'imposteur';
   const isJustePrix = final.type === 'juste-prix';
   const isPaint = final.type === 'paint';
-  const unit = (n) => (isTier || isMeme || isQuiz || isImpostor || isJustePrix || isPaint ? plural(n, 'pt', 'pts') : plural(n, 'vote', 'votes'));
+  const isCoqAne = final.type === 'coq-ane';
+  const unit = (n) => (isTier || isMeme || isQuiz || isImpostor || isJustePrix || isPaint || isCoqAne ? plural(n, 'pt', 'pts') : plural(n, 'vote', 'votes'));
   const [first, second, third] = final.ranking;
   const podium = [[second, 2], [first, 1], [third, 3]].filter(([entry]) => entry);
+  if (final.type === 'loup-garou' && final.lg) return renderLoupGarouEnd(final);
+  if (final.type === 'tic-tac-boum' && final.tb) return renderTicTacBoumEnd(final);
 
   return h(
     'div',
@@ -738,7 +751,7 @@ function renderFinal(lobby) {
       'section',
       { class: 'question-card is-compact' },
       h('span', { class: 'eyebrow' }, 'Fin de la partie'),
-      h('h1', { class: 'question' }, isPaint ? 'Les Picasso de la soirée' : isJustePrix ? 'Les rois de l’estimation' : isImpostor ? 'Les meilleurs menteurs' : isQuiz ? 'Les cerveaux de la soirée' : isMeme ? 'Les rois du meme' : isTier ? 'Classement général' : 'Les plus désignés de la partie'),
+      h('h1', { class: 'question' }, isCoqAne ? 'Les artistes de la soirée' : isPaint ? 'Les Picasso de la soirée' : isJustePrix ? 'Les rois de l’estimation' : isImpostor ? 'Les meilleurs menteurs' : isQuiz ? 'Les cerveaux de la soirée' : isMeme ? 'Les rois du meme' : isTier ? 'Classement général' : 'Les plus désignés de la partie'),
     ),
     h(
       'section',
@@ -770,7 +783,7 @@ function renderFinal(lobby) {
     ),
     isMeme
       ? renderMemeRecap(final)
-      : isQuiz || isJustePrix || isPaint
+      : isQuiz || isJustePrix || isPaint || isCoqAne
       ? renderQuizRecap(final, quizContext)
       : final.recap.length
       ? h(
@@ -1189,6 +1202,48 @@ function toggleVersion(force) {
   }
 }
 
+// Fin d'une partie de Tic Tac Boum : le dernier survivant.
+function renderTicTacBoumEnd(final) {
+  const winner = getPlayer(final.tb.winner);
+  return h(
+    'div',
+    { class: 'stack' },
+    h(
+      'section',
+      { class: 'question-card is-compact' },
+      h('span', { class: 'eyebrow' }, 'Fin de la partie · dernier survivant'),
+      h('div', { class: 'winners' }, h('div', { class: 'winner' }, avatar(winner, 'xl'), h('strong', {}, `💣 ${winner.name}`))),
+    ),
+    renderTicTacBoumFinal(final, quizContext),
+    isHost()
+      ? h(
+          'div',
+          { class: 'row' },
+          h('button', { type: 'button', class: 'btn btn-ghost', onClick: () => action('game:back-to-lobby') }, 'Retour au lobby'),
+          h('button', { type: 'button', class: 'btn btn-primary', onClick: () => action('game:start') }, 'Rejouer 🔁'),
+        )
+      : renderWaiting('L’hôte choisit la suite…'),
+  );
+}
+
+// Fin d'une partie de Loup-Garou : le camp gagnant et tous les rôles.
+function renderLoupGarouEnd(final) {
+  return h(
+    'div',
+    { class: 'stack' },
+    h('section', { class: 'question-card is-compact' }, h('span', { class: 'eyebrow' }, 'Fin de la partie'), h('h1', { class: 'question' }, final.lg.label)),
+    renderLoupGarouFinal(final, quizContext),
+    isHost()
+      ? h(
+          'div',
+          { class: 'row' },
+          h('button', { type: 'button', class: 'btn btn-ghost', onClick: () => action('game:back-to-lobby') }, 'Retour au lobby'),
+          h('button', { type: 'button', class: 'btn btn-primary', onClick: () => action('game:start') }, 'Rejouer 🔁'),
+        )
+      : renderWaiting('L’hôte choisit la suite…'),
+  );
+}
+
 // Ce dont le module M-Culture a besoin (défini ici pour partager les mêmes helpers).
 const quizContext = {
   action,
@@ -1225,6 +1280,7 @@ socket.on('connect', async () => {
 });
 
 attachPaintSocket(socket);
+attachTicTacBoumSocket(socket);
 
 socket.on('disconnect', () => {
   if (state.lobby) els.banner.hidden = false;

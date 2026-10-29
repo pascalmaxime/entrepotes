@@ -94,7 +94,7 @@ function hexToRgb(hex) {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
-function createBoard() {
+export function createBoard() {
   const canvas = h('canvas', { class: 'paint-canvas', width: SIZE, height: SIZE });
   const g = canvas.getContext('2d', { willReadFrequently: true });
   let last = new Map(); // dernier point de chaque trait (les traits arrivent en plusieurs morceaux)
@@ -452,15 +452,16 @@ export function buildPaintScreen(lobby, ctx) {
 // Outils du dessinateur
 // ---------------------------------------------------------------------------
 
-function buildTools(board, ctx, key) {
+function buildTools(board, ctx, key, sink = null) {
   const state = { tool: 'pen', color: '#000000', size: SIZES[1].px };
   let stroke = null;
   let buffer = [];
   let flushTimer = null;
 
-  const send = (op) => ctx.emit('paint:draw', { op }).then((res) => {
+  // Par défaut on envoie au serveur (Paint) ; « sink » permet de dessiner en local (Du coq à l'âne).
+  const send = sink ?? ((op) => ctx.emit('paint:draw', { op }).then((res) => {
     if (!res.ok && res.error !== 'NOT_DRAWING') ctx.toast(res.message, 'error');
-  });
+  }));
   const flush = () => {
     clearTimeout(flushTimer);
     flushTimer = null;
@@ -562,5 +563,40 @@ function buildTools(board, ctx, key) {
   };
   draw();
   void key;
+  box.flush = flush;
   return box;
+}
+
+// Dessin local (non partagé en direct) : on récupère la liste des traits à la fin.
+export function createSketch(ctx) {
+  const board = createBoard();
+  let ops = [];
+  const sink = (op) => {
+    if (op.t === 'u') {
+      const last = ops.at(-1);
+      if (last?.t === 's') ops = ops.filter((o) => !(o.t === 's' && o.id === last.id));
+      else ops.pop();
+      board.reset(ops);
+    } else ops.push(op);
+    return Promise.resolve();
+  };
+  const tools = buildTools(board, ctx, null, sink);
+  return {
+    el: h('div', { class: 'sketch' }, h('div', { class: 'paint-stage' }, board.canvas), tools),
+    getOps() {
+      tools.flush();
+      return ops;
+    },
+    disable() {
+      board.canvas.style.pointerEvents = 'none';
+      tools.querySelectorAll('button, input').forEach((b) => { b.disabled = true; });
+    },
+  };
+}
+
+// Affiche un dessin terminé (lecture seule).
+export function renderDrawing(ops, className = '') {
+  const board = createBoard();
+  board.reset(ops ?? []);
+  return h('div', { class: `paint-stage drawing-view ${className}` }, board.canvas);
 }

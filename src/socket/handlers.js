@@ -141,6 +141,23 @@ export function registerSocketHandlers(io, manager) {
     lobbyAction('meme:submit', (lobby, playerId, { items }) => lobby.submitMeme(playerId, items));
     lobbyAction('meme:votes', (lobby, playerId, { votes }) => lobby.submitMemeVotes(playerId, votes));
     lobbyAction('jp:answer', (lobby, playerId, payload) => lobby.justePrixAnswer(playerId, payload));
+    // Tic Tac Boum : le mot est vérifié, puis tout le monde reçoit l'état (fil des réponses, bombe).
+    on('tb:word', ({ text }) => {
+      const { lobby, playerId } = context();
+      const result = lobby.tbWord(playerId, text);
+      broadcast(lobby);
+      return { valid: result.ok, reason: result.reason ?? null };
+    });
+    // Frappe en direct du porteur de la bombe : relayée aux autres, sans renvoyer tout l'état.
+    on('tb:typing', ({ text }) => {
+      const { lobby, playerId } = context();
+      const typed = lobby.tbTyping(playerId, text);
+      if (typed !== null) socket.to(room(lobby.code)).emit('tb:typing', { playerId, text: typed });
+    });
+    lobbyAction('cc:submit', (lobby, playerId, payload) => lobby.ccSubmit(playerId, payload));
+    lobbyAction('cc:reveal-all', (lobby, playerId) => lobby.ccRevealAll(playerId));
+    lobbyAction('lg:action', (lobby, playerId, payload) => lobby.lgAct(playerId, payload));
+    lobbyAction('lg:chat', (lobby, playerId, payload) => lobby.lgChat(playerId, payload));
     lobbyAction('paint:choose', (lobby, playerId, { difficulty }) => lobby.paintChoose(playerId, difficulty));
     lobbyAction('paint:guess', (lobby, playerId, { text }) => lobby.paintGuess(playerId, text));
 

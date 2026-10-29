@@ -14,6 +14,13 @@ const HOST = process.env.HOST || '0.0.0.0';
 
 const { httpServer, io, auth } = createApp();
 
+// Le dictionnaire de Tic Tac Boum (~336 000 mots) est chargé juste après le démarrage.
+setTimeout(() => {
+  import('./tictacboum/engine.js')
+    .then(({ loadDictionary }) => loadDictionary())
+    .catch((error) => console.warn('[tic-tac-boum] Dictionnaire indisponible :', error.message));
+}, 500).unref();
+
 httpServer.listen(PORT, HOST, () => {
   console.log(`Serveur démarré sur http://localhost:${PORT}`);
   console.log(

@@ -1,16 +1,12 @@
 {
   "_info": "Modifie ce fichier pour annoncer une nouvelle version : numéro, nom, date (AAAA-MM-JJ) et liste des nouveautés. C'est pris en compte immédiatement, sans redémarrer le serveur.",
-  "version": "0.3.0",
-  "name": "M-Culture, L’Imposteur, Le Juste Prix & Paint",
-  "date": "2026-10-28",
+  "version": "0.4.0",
+  "name": "Loup-Garou, Tic Tac Boum & Du coq à l’âne (bêta)",
+  "date": "2026-10-29",
   "notes": [
-    "Nouveau jeu « M-Culture » : culture G, drapeaux, pays sur la carte, rébus emojis, musique et petit bac",
-    "L’hôte choisit les catégories, le nombre de questions et le chrono, puis corrige les réponses à la fin",
-    "Nouveau jeu « Le Juste Prix » : prix, poids, distances, population, PIB… le plus proche gagne, plus des classements Top 1, 2, 3",
-    "Nouveau jeu « Paint » : chacun son tour dessine, les autres devinent dans le chat (pinceaux, couleurs, pot de peinture, indices de lettres)",
-    "Nouveau jeu « L’Imposteur » : civils, imposteurs et Mr. White, indices, votes… près de 500 paires de mots gratuites",
-    "Tier List : à la fin de chaque question, découvre le classement complet de chaque joueur",
-    "Qui de nous et Tier List : près de 300 nouvelles questions",
-    "Top Meme : un pack de 47 templates prêts à jouer, importable en une fois depuis l’admin"
+    "Nouveau jeu « Loup-Garou » (bêta) : table ronde, rôles classiques (voyante, sorcière, chasseur, Cupidon, petite fille, salvateur, ancien, idiot)",
+    "Composition choisie par l’hôte avec une recommandation selon le nombre de joueurs, élection du maire, chat secret des loups et cimetière",
+    "Nouveau jeu « Tic Tac Boum » : trouve un mot avec la syllabe avant que la bombe n’explose (mèche secrète, vies, dictionnaire de 336 000 mots)",
+    "Nouveau jeu « Du coq à l’âne » : le téléphone arabe en dessin (on dessine, le voisin devine, le suivant redessine…), révélation des carnets page par page"
   ]
 }
