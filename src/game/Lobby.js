@@ -18,6 +18,8 @@ import * as bl from '../bluff/engine.js';
 import * as gp from '../geopin/engine.js';
 import * as cn from '../nomdecode/engine.js';
 import * as mym from '../motmystere/engine.js';
+import * as cs from '../chronostars/engine.js';
+import * as om from '../memeonde/engine.js';
 
 export const MAX_PLAYERS = 12;
 export const ROUNDS_LIMITS = Object.freeze({ min: 1, max: 20, default: 5 });
@@ -76,6 +78,8 @@ export class Lobby {
       geoPin: gp.defaultSettings(),
       nomDeCode: cn.defaultSettings(),
       motMystere: mym.defaultSettings(),
+      chronoStars: cs.defaultSettings(),
+      memeOnde: om.defaultSettings(),
     };
     this.state = 'lobby';
     this.game = null;
@@ -170,6 +174,8 @@ export class Lobby {
       if (this.game.kind === 'geo-pin') gp.playerGone(this, playerId);
       if (this.game.kind === 'nom-de-code') cn.playerGone(this, playerId);
       if (this.game.kind === 'mot-mystere') mym.playerGone(this, playerId);
+      if (this.game.kind === 'chrono-stars') cs.playerGone(this, playerId);
+      if (this.game.kind === 'meme-onde') om.playerGone(this, playerId);
     }
     if (this.hostId === playerId) this.transferHost();
     if (this.isEmpty) this.hostId = null;
@@ -204,7 +210,7 @@ export class Lobby {
   }
 
   // Chaque réglage est facultatif : on ne modifie que ce qui est envoyé.
-  setSettings(playerId, { rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty, blCategories, blWrite, blVote, blDouble, gpCategories, gpTimer, gpHint, cnRounds, cnTimer, mmRounds, mmLength, mmTimer, mmFirst } = {}) {
+  setSettings(playerId, { rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty, blCategories, blWrite, blVote, blDouble, gpCategories, gpTimer, gpHint, cnRounds, cnTimer, mmRounds, mmLength, mmTimer, mmFirst, csCards, csTimer, csCategories, omTurns, omClue, omGuess } = {}) {
     this.assertHost(playerId);
     this.assertOpen('Impossible de modifier les réglages pendant une partie.');
     const next = { ...this.settings };
@@ -270,6 +276,12 @@ export class Lobby {
     if ([gpCategories, gpTimer, gpHint].some((v) => v !== undefined)) {
       next.geoPin = gp.sanitizeSettings(next.geoPin, { gpCategories, gpTimer, gpHint });
     }
+    if ([omTurns, omClue, omGuess].some((v) => v !== undefined)) {
+      next.memeOnde = om.sanitizeSettings(next.memeOnde, { omTurns, omClue, omGuess });
+    }
+    if ([csCards, csTimer, csCategories].some((v) => v !== undefined)) {
+      next.chronoStars = cs.sanitizeSettings(next.chronoStars, { csCards, csTimer, csCategories });
+    }
     if ([mmRounds, mmLength, mmTimer, mmFirst].some((v) => v !== undefined)) {
       next.motMystere = mym.sanitizeSettings(next.motMystere, { mmRounds, mmLength, mmTimer, mmFirst });
     }
@@ -301,7 +313,7 @@ export class Lobby {
       }
       next.loupGarou = l;
     }
-    if ([rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty, blCategories, blWrite, blVote, blDouble, gpCategories, gpTimer, gpHint, cnRounds, cnTimer, mmRounds, mmLength, mmTimer, mmFirst].every((v) => v === undefined)) {
+    if ([rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty, blCategories, blWrite, blVote, blDouble, gpCategories, gpTimer, gpHint, cnRounds, cnTimer, mmRounds, mmLength, mmTimer, mmFirst, csCards, csTimer, csCategories, omTurns, omClue, omGuess].every((v) => v === undefined)) {
       throw new GameError('INVALID_SETTINGS', 'Aucun réglage à modifier.');
     }
     this.settings = next;
@@ -356,6 +368,16 @@ export class Lobby {
       return;
     }
 
+    if (mode.kind === 'chrono-stars') {
+      cs.startChronoStars(this, base);
+      return;
+    }
+
+    if (mode.kind === 'meme-onde') {
+      om.startMemeOnde(this, base);
+      return;
+    }
+
     if (mode.kind === 'tic-tac-boum') {
       tb.startTicTacBoum(this, base);
       return;
@@ -407,6 +429,8 @@ export class Lobby {
     if (this.game?.kind === 'geo-pin') return gp.progress(this);
     if (this.game?.kind === 'nom-de-code') return cn.progress(this);
     if (this.game?.kind === 'mot-mystere') return mym.progress(this);
+    if (this.game?.kind === 'chrono-stars') return cs.progress(this);
+    if (this.game?.kind === 'meme-onde') return om.progress(this);
     if (this.game?.kind === 'impostor') return impostor.checkImpostorProgress(this);
     return false;
   }
@@ -735,6 +759,30 @@ export class Lobby {
     gp.submitGuess(this, playerId, payload);
   }
 
+  // --- Mode "meme-onde" (Sur la même onde) ----------------------------------------------------
+
+  omClue(playerId, payload) {
+    om.submitClue(this, playerId, payload);
+  }
+
+  omGuess(playerId, payload) {
+    om.submitGuess(this, playerId, payload);
+  }
+
+  // --- Mode "chrono-stars" (Chrono Stars, façon Time's Up) -----------------------------------
+
+  csGo(playerId) {
+    cs.go(this, playerId);
+  }
+
+  csFound(playerId, payload) {
+    cs.found(this, playerId, payload);
+  }
+
+  csPass(playerId, payload) {
+    cs.pass(this, playerId, payload);
+  }
+
   // --- Mode "mot-mystere" (Mot Mystère) ------------------------------------------------------
 
   mmGuess(playerId, payload) {
@@ -833,6 +881,10 @@ export class Lobby {
       this.revealMemes();
     } else if (this.state === 'quiz') {
       this.advanceQuiz(); // l'hôte passe la question
+    } else if (this.state === 'om-clue' || this.state === 'om-guess') {
+      om.hostSkip(this); // l'hôte passe le tour / révèle sans attendre
+    } else if (this.state === 'cs-ready' || this.state === 'cs-play') {
+      cs.hostSkip(this); // l'hôte change de joueur / arrête le tour
     } else if (this.state === 'mm-play') {
       mym.hostSkip(this); // l'hôte révèle le mot sans attendre
     } else if (this.state === 'cn-clue' || this.state === 'cn-guess') {
@@ -882,6 +934,14 @@ export class Lobby {
     }
     if (this.state === 'mm-reveal') {
       mym.next(this);
+      return;
+    }
+    if (this.state === 'cs-manche-end') {
+      cs.next(this);
+      return;
+    }
+    if (this.state === 'om-reveal') {
+      om.next(this);
       return;
     }
     if (this.state === 'paint-end') {
@@ -952,7 +1012,7 @@ export class Lobby {
       mode: this.mode,
       settings: { ...this.settings },
       state,
-      limits: { maxPlayers: MAX_PLAYERS, rounds: { ...ROUNDS_LIMITS }, quiz: this.quizLimits(), impostor: this.impostorLimits(), justePrix: this.justePrixLimits(), paint: this.paintLimits(), loupGarou: this.loupGarouLimits(), ticTacBoum: OPEN_STATES.has(state) ? tb.tbLimits() : null, coqAne: OPEN_STATES.has(state) ? { ...cc.CC_LIMITS, minPlayers: cc.MIN_PLAYERS, players: this.connectedPlayers.length } : null, bluff: OPEN_STATES.has(state) && this.mode === 'bluff' ? bl.bluffLimits(this) : null, geoPin: OPEN_STATES.has(state) && this.mode === 'geo-pin' ? gp.geoPinLimits(this) : null, nomDeCode: OPEN_STATES.has(state) && this.mode === 'nom-de-code' ? cn.cnLimits(this) : null, motMystere: OPEN_STATES.has(state) && this.mode === 'mot-mystere' ? mym.mmLimits(this) : null },
+      limits: { maxPlayers: MAX_PLAYERS, rounds: { ...ROUNDS_LIMITS }, quiz: this.quizLimits(), impostor: this.impostorLimits(), justePrix: this.justePrixLimits(), paint: this.paintLimits(), loupGarou: this.loupGarouLimits(), ticTacBoum: OPEN_STATES.has(state) ? tb.tbLimits() : null, coqAne: OPEN_STATES.has(state) ? { ...cc.CC_LIMITS, minPlayers: cc.MIN_PLAYERS, players: this.connectedPlayers.length } : null, bluff: OPEN_STATES.has(state) && this.mode === 'bluff' ? bl.bluffLimits(this) : null, geoPin: OPEN_STATES.has(state) && this.mode === 'geo-pin' ? gp.geoPinLimits(this) : null, nomDeCode: OPEN_STATES.has(state) && this.mode === 'nom-de-code' ? cn.cnLimits(this) : null, motMystere: OPEN_STATES.has(state) && this.mode === 'mot-mystere' ? mym.mmLimits(this) : null, chronoStars: OPEN_STATES.has(state) && this.mode === 'chrono-stars' ? cs.csLimits(this) : null, memeOnde: OPEN_STATES.has(state) && this.mode === 'meme-onde' ? om.omLimits(this) : null },
       library: this.memeLibrary ? { count: this.memeLibrary.count } : null,
       players: [...this.players.values()].map(({ id, name, connected }) => ({
         id,
@@ -990,7 +1050,9 @@ export class Lobby {
             geoPin: game.kind === 'geo-pin' ? gp.geoPinPublic(this, viewerId) : null,
             nomDeCode: game.kind === 'nom-de-code' ? cn.cnPublic(this, viewerId) : null,
             motMystere: game.kind === 'mot-mystere' ? mym.mmPublic(this, viewerId) : null,
-            result: state === 'results' || state === 'jp-reveal' || state === 'bl-reveal' || state === 'gp-reveal' || state === 'mm-reveal' ? game.result : null,
+            chronoStars: game.kind === 'chrono-stars' ? cs.csPublic(this, viewerId) : null,
+            memeOnde: game.kind === 'meme-onde' ? om.omPublic(this, viewerId) : null,
+            result: state === 'results' || state === 'jp-reveal' || state === 'bl-reveal' || state === 'gp-reveal' || state === 'mm-reveal' || state === 'om-reveal' ? game.result : null,
             final: state === 'finished' ? game.final : null,
           }
         : null,

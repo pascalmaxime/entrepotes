@@ -1316,3 +1316,105 @@ input::placeholder { color: rgba(184, 176, 224, 0.55); }
 @keyframes mm-pop { from { transform: scale(1.12); } to { transform: none; } }
 @keyframes mm-shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
 @media (prefers-reduced-motion: reduce) { .mm-cell, .mm-row.is-shake, .mm-board { animation: none !important; } }
+
+/* ---------- Chrono Stars (façon Time's Up) ---------- */
+.cs-score { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cs-team { padding: 10px 12px; border-radius: var(--radius); background: var(--card); border: 2px solid var(--line); min-width: 0; transition: box-shadow 0.2s, border-color 0.2s; }
+.cs-team-rouge { border-color: rgba(255, 84, 112, 0.45); }
+.cs-team-bleu { border-color: rgba(61, 139, 255, 0.45); }
+.cs-team-rouge.is-turn { border-color: var(--cn-red); box-shadow: 0 0 0 4px rgba(255, 84, 112, 0.25); }
+.cs-team-bleu.is-turn { border-color: var(--cn-blue); box-shadow: 0 0 0 4px rgba(61, 139, 255, 0.25); }
+.cs-team-head { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 0.9rem; }
+.cs-total { font-family: var(--font-display); font-size: 1.7rem; line-height: 1; }
+.cs-team-rouge .cs-total { color: var(--cn-red); }
+.cs-team-bleu .cs-total { color: var(--cn-blue); }
+.cs-members { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.cs-member { border-radius: 50%; }
+.cs-member.is-away { opacity: 0.4; }
+.cs-member.is-clueur { box-shadow: 0 0 0 3px var(--accent); }
+.cs-manche { text-align: center; }
+.cs-manche-title { margin: 6px 0 2px; }
+.cs-rule { margin: 0; color: var(--muted); font-weight: 700; }
+.cs-last { border-left: 6px solid var(--line); }
+.cs-last-rouge { border-left-color: var(--cn-red); }
+.cs-last-bleu { border-left-color: var(--cn-blue); }
+.cs-last p { margin: 6px 0 0; }
+.cs-names { font-weight: 800; color: var(--accent); }
+.cs-announce { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; border-width: 2px; }
+.cs-announce-rouge { border-color: var(--cn-red); }
+.cs-announce-bleu { border-color: var(--cn-blue); }
+.cs-announce h2 { margin: 4px 0 0; font-size: 1.4rem; }
+.cs-who { margin: 0; font-weight: 800; }
+.cs-role { margin: 4px 0 0; font-weight: 800; color: var(--muted); }
+.cs-go { width: 100%; }
+.cs-timer { position: sticky; top: 8px; z-index: 5; }
+.cs-card {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 230px; padding: 28px 18px;
+  border-radius: 24px; background: #fff8e7; color: #1d1640; text-align: center; box-shadow: 0 10px 0 rgba(0, 0, 0, 0.25); border: 6px solid var(--accent);
+  animation: cs-in 0.25s ease-out both;
+}
+.cs-card-rouge { border-color: var(--cn-red); }
+.cs-card-bleu { border-color: var(--cn-blue); }
+.cs-card-cat { position: absolute; top: 12px; left: 16px; font-size: 1.5rem; }
+.cs-card-name { font-family: var(--font-display); font-size: clamp(1.7rem, 8vw, 2.8rem); line-height: 1.1; overflow-wrap: anywhere; }
+.cs-card-rule { font-weight: 800; color: #6b6290; }
+.cs-buttons { display: flex; gap: 10px; }
+.cs-buttons .btn { flex: 1; min-height: 72px; font-size: 1.3rem; }
+.cs-found { flex: 2 !important; background: var(--tier-1); color: #05290f; box-shadow: 0 5px 0 #1f8a45; }
+.cs-watch { text-align: center; display: flex; flex-direction: column; gap: 8px; border: 2px dashed var(--accent); }
+.cs-watch-name { font-family: var(--font-display); font-size: clamp(1.4rem, 6vw, 2rem); color: var(--accent); overflow-wrap: anywhere; }
+.cs-guess { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; border-width: 2px; padding: 28px 16px; }
+.cs-guess-rouge { border-color: var(--cn-red); }
+.cs-guess-bleu { border-color: var(--cn-blue); }
+.cs-guess-emoji { font-size: 3.5rem; line-height: 1; animation: cs-bounce 1s ease-in-out infinite alternate; }
+.cs-guess h2 { margin: 0; }
+.cs-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cs-chip { padding: 4px 10px; border-radius: 999px; background: var(--bg-2); font-weight: 800; font-size: 0.85rem; animation: cs-in 0.25s ease-out both; }
+.cs-versus { margin: 4px 0; font-family: var(--font-display); font-size: 1.6rem; }
+.cs-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.cs-result-rouge { border-top: 4px solid var(--cn-red); }
+.cs-result-bleu { border-top: 4px solid var(--cn-blue); }
+@keyframes cs-in { from { transform: scale(0.92); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes cs-bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) { .cs-card, .cs-chip, .cs-guess-emoji { animation: none; } }
+
+/* ---------- Sur la même onde ---------- */
+.om-title { margin: 6px 0 0; }
+.om-scale { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px 10px; border-radius: var(--radius); background: var(--card); border: 1px solid var(--line); }
+.om-ends { display: flex; justify-content: space-between; gap: 10px; font-weight: 900; font-size: 0.95rem; }
+.om-end-left { color: var(--cyan); }
+.om-end-right { color: var(--pink); text-align: right; }
+.om-bar {
+  position: relative; height: 64px; border-radius: 14px; margin: 6px 0;
+  background: linear-gradient(90deg, rgba(79, 209, 255, 0.55), rgba(184, 176, 224, 0.25) 50%, rgba(255, 92, 168, 0.55));
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+.om-ticks { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); font-weight: 700; }
+.om-zone { position: absolute; top: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 2px; }
+.om-zone b { font-size: 0.7rem; color: rgba(0, 0, 0, 0.55); }
+.om-zone-2 { background: rgba(250, 204, 21, 0.55); }
+.om-zone-3 { background: rgba(251, 146, 60, 0.85); }
+.om-zone-4 { background: #ef4444; }
+.om-zone-4 b { color: #fff; }
+.om-target { position: absolute; top: -8px; bottom: -8px; width: 4px; margin-left: -2px; background: #fff; border-radius: 2px; box-shadow: 0 0 10px #fff; }
+.om-range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background: transparent; -webkit-appearance: none; appearance: none; cursor: pointer; touch-action: none; }
+.om-range::-webkit-slider-runnable-track { height: 100%; background: transparent; }
+.om-range::-moz-range-track { height: 100%; background: transparent; }
+.om-range::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 76px; margin-top: -6px; border-radius: 10px; background: var(--accent); border: 3px solid #2b1d00; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
+.om-range::-moz-range-thumb { width: 26px; height: 72px; border-radius: 10px; background: var(--accent); border: 3px solid #2b1d00; }
+.om-bubble { position: absolute; top: -34px; transform: translateX(-50%); padding: 2px 8px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 900; font-size: 0.85rem; pointer-events: none; }
+.om-marker { position: absolute; top: calc(4px + var(--row) * 18px); transform: translateX(-50%); animation: om-drop 0.45s ease-out both; animation-delay: calc(0.3s + var(--i) * 0.15s); z-index: 2; }
+.om-marker .avatar { box-shadow: 0 0 0 2px #fff; }
+.om-marker.om-hit-4 .avatar { box-shadow: 0 0 0 3px #22c55e; }
+.om-tip { margin: 0; color: var(--muted); font-weight: 700; }
+.om-tip strong { color: var(--accent); }
+.om-center { text-align: center; }
+.om-tip.is-sent { color: var(--tier-1); }
+.om-clue-form { display: flex; flex-direction: column; gap: 10px; }
+.om-clue { text-align: center; display: flex; flex-direction: column; gap: 6px; }
+.om-clue-text { font-family: var(--font-display); font-size: clamp(1.4rem, 6vw, 2.1rem); color: var(--accent); overflow-wrap: anywhere; }
+.om-wait { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.om-dist { margin-left: auto; margin-right: 10px; color: var(--muted); font-size: 0.85rem; font-weight: 700; }
+.om-medium-row { opacity: 0.85; border-top: 1px dashed var(--line); }
+@keyframes om-drop { from { transform: translate(-50%, -30px); opacity: 0; } to { transform: translateX(-50%); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .om-marker { animation: none; } }

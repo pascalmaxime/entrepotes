@@ -1,12 +1,12 @@
 {
   "_info": "Modifie ce fichier pour annoncer une nouvelle version : numéro, nom, date (AAAA-MM-JJ) et liste des nouveautés. C'est pris en compte immédiatement, sans redémarrer le serveur.",
-  "version": "0.5.5",
-  "name": "Nom du code + Mot Mystère (bêta)",
+  "version": "0.5.7",
+  "name": "Chrono Stars + Sur la même onde (bêta)",
   "date": "2026-11-16",
   "notes": [
-    "Nouveau jeu « Mot Mystère » (bêta), façon Motus : le même mot pour tous, 6 essais, en course",
-    "🟥 bien placée, 🟡 mal placée : tu vois la progression des autres en couleurs, jamais leurs lettres",
-    "836 mots de 5 à 8 lettres, première lettre donnée au choix, clavier à l’écran ou clavier de l’ordinateur",
-    "Toujours en bêta : « Nom de code », façon Codenames"
+    "Nouveau jeu « Sur la même onde » (bêta), façon Wavelength : une échelle (« Froid ↔ Chaud »), une cible cachée. Le médium donne un indice, les autres placent leur curseur",
+    "Nouveau jeu « Chrono Stars » (bêta), façon Time’s Up : 2 équipes, le même paquet de célébrités sur 3 manches (description, un seul mot, mime)",
+    "151 échelles et 394 personnalités (stars, histoire, fiction)",
+    "Toujours en bêta : « Nom de code » et « Mot Mystère »"
   ]
 }

@@ -12,13 +12,15 @@ import bluff from './bluff.js';
 import geoPin from './geoPin.js';
 import nomDeCode from './nomDeCode.js';
 import motMystere from './motMystere.js';
+import chronoStars from './chronoStars.js';
+import memeOnde from './memeOnde.js';
 
 // Pour ajouter un mode : créer son fichier puis l'ajouter à cette liste.
 // kind 'question' : une question + un vote (Qui de nous, Tier List) ; kind 'meme' : Top Meme ;
 // kind 'quiz' : M-Culture ; kind 'impostor' : L'Imposteur ; kind 'juste-prix' : Le Juste Prix ; kind 'paint' : Paint ;
 // kind 'loup-garou' : Loup-Garou ; kind 'tic-tac-boum' : Tic Tac Boum ;
-// kind 'coq-ane' : Du coq à l'âne ; kind 'bluff' : Bluff ; kind 'geo-pin' : Géo Pin ; kind 'nom-de-code' : Nom de code ; kind 'mot-mystere' : Mot Mystère.
-const PLAYABLE = [quiDeNous, tierList, topMeme, mCulture, imposteur, justePrix, paint, loupGarou, ticTacBoum, coqAne, bluff, geoPin, nomDeCode, motMystere];
+// kind 'coq-ane' : Du coq à l'âne ; kind 'bluff' : Bluff ; kind 'geo-pin' : Géo Pin ; kind 'nom-de-code' : Nom de code ; kind 'mot-mystere' : Mot Mystère ; kind 'chrono-stars' : Chrono Stars ; kind 'meme-onde' : Sur la même onde.
+const PLAYABLE = [quiDeNous, tierList, topMeme, mCulture, imposteur, justePrix, paint, loupGarou, ticTacBoum, coqAne, bluff, geoPin, nomDeCode, motMystere, chronoStars, memeOnde];
 
 export const MODES = Object.fromEntries(PLAYABLE.map((mode) => [mode.id, mode]));
 export const DEFAULT_MODE = quiDeNous.id;

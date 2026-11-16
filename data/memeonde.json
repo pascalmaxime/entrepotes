@@ -1,0 +1,609 @@
+{
+ "_info": "Échelles de « Sur la même onde » : [à gauche, à droite]. Ajoute ou retire des lignes librement, c'est relu sans redémarrer.",
+ "echelles": [
+  [
+   "Froid",
+   "Chaud"
+  ],
+  [
+   "Nul",
+   "Génial"
+  ],
+  [
+   "Inutile",
+   "Indispensable"
+  ],
+  [
+   "Sain",
+   "Pas sain du tout"
+  ],
+  [
+   "Facile",
+   "Difficile"
+  ],
+  [
+   "Moche",
+   "Beau"
+  ],
+  [
+   "Pas cher",
+   "Hors de prix"
+  ],
+  [
+   "Ennuyeux",
+   "Passionnant"
+  ],
+  [
+   "Calme",
+   "Bruyant"
+  ],
+  [
+   "Petit",
+   "Énorme"
+  ],
+  [
+   "Lent",
+   "Rapide"
+  ],
+  [
+   "Sucré",
+   "Salé"
+  ],
+  [
+   "Doux",
+   "Piquant"
+  ],
+  [
+   "Ringard",
+   "Stylé"
+  ],
+  [
+   "Sans danger",
+   "Mortel"
+  ],
+  [
+   "Triste",
+   "Joyeux"
+  ],
+  [
+   "Peureux",
+   "Courageux"
+  ],
+  [
+   "Faible",
+   "Fort"
+  ],
+  [
+   "Rare",
+   "Courant"
+  ],
+  [
+   "Mauvaise idée",
+   "Bonne idée"
+  ],
+  [
+   "Sous-coté",
+   "Surcoté"
+  ],
+  [
+   "Enfantin",
+   "Adulte"
+  ],
+  [
+   "Vieux jeu",
+   "Moderne"
+  ],
+  [
+   "Naturel",
+   "Artificiel"
+  ],
+  [
+   "Sale",
+   "Propre"
+  ],
+  [
+   "Gentil",
+   "Méchant"
+  ],
+  [
+   "Inconnu",
+   "Super célèbre"
+  ],
+  [
+   "Raté",
+   "Réussi"
+  ],
+  [
+   "Mou",
+   "Dur"
+  ],
+  [
+   "Léger",
+   "Lourd"
+  ],
+  [
+   "Bon marché",
+   "Luxueux"
+  ],
+  [
+   "Sport facile",
+   "Sport difficile"
+  ],
+  [
+   "Film nul",
+   "Chef-d’œuvre"
+  ],
+  [
+   "Plat raté",
+   "Plat de chef"
+  ],
+  [
+   "Pire métier",
+   "Métier de rêve"
+  ],
+  [
+   "Animal mignon",
+   "Animal flippant"
+  ],
+  [
+   "Vacances nulles",
+   "Vacances de rêve"
+  ],
+  [
+   "Super-pouvoir nul",
+   "Super-pouvoir génial"
+  ],
+  [
+   "Odeur horrible",
+   "Odeur délicieuse"
+  ],
+  [
+   "Pas romantique",
+   "Très romantique"
+  ],
+  [
+   "Pas drôle",
+   "Hilarant"
+  ],
+  [
+   "Silencieux",
+   "Assourdissant"
+  ],
+  [
+   "Liquide",
+   "Solide"
+  ],
+  [
+   "Gênant",
+   "Classe"
+  ],
+  [
+   "Interdit",
+   "Obligatoire"
+  ],
+  [
+   "Pour les enfants",
+   "Pour les adultes"
+  ],
+  [
+   "Déprimant",
+   "Motivant"
+  ],
+  [
+   "Pas écolo",
+   "Très écolo"
+  ],
+  [
+   "Sous-estimé",
+   "Surestimé"
+  ],
+  [
+   "Hiver",
+   "Été"
+  ],
+  [
+   "Matin",
+   "Soir"
+  ],
+  [
+   "Ville",
+   "Campagne"
+  ],
+  [
+   "Mer",
+   "Montagne"
+  ],
+  [
+   "Chien",
+   "Chat"
+  ],
+  [
+   "Salé",
+   "Sucré"
+  ],
+  [
+   "Introverti",
+   "Extraverti"
+  ],
+  [
+   "Débutant",
+   "Expert"
+  ],
+  [
+   "Fragile",
+   "Incassable"
+  ],
+  [
+   "Inoffensif",
+   "Dangereux"
+  ],
+  [
+   "Pas sportif",
+   "Très sportif"
+  ],
+  [
+   "Vieillot",
+   "Futuriste"
+  ],
+  [
+   "Simple",
+   "Compliqué"
+  ],
+  [
+   "Lent à manger",
+   "Vite englouti"
+  ],
+  [
+   "Bon pour la santé",
+   "Mauvais pour la santé"
+  ],
+  [
+   "Petit-déjeuner",
+   "Dîner"
+  ],
+  [
+   "Normal",
+   "Bizarre"
+  ],
+  [
+   "Ordinaire",
+   "Extraordinaire"
+  ],
+  [
+   "Réaliste",
+   "Fantastique"
+  ],
+  [
+   "Honnête",
+   "Menteur"
+  ],
+  [
+   "Prévisible",
+   "Surprenant"
+  ],
+  [
+   "Démodé",
+   "Tendance"
+  ],
+  [
+   "Facile à dessiner",
+   "Impossible à dessiner"
+  ],
+  [
+   "Facile à mimer",
+   "Impossible à mimer"
+  ],
+  [
+   "Pas effrayant",
+   "Terrifiant"
+  ],
+  [
+   "Banal",
+   "Unique"
+  ],
+  [
+   "Pauvre",
+   "Riche"
+  ],
+  [
+   "Court",
+   "Long"
+  ],
+  [
+   "Proche",
+   "Lointain"
+  ],
+  [
+   "Sec",
+   "Mouillé"
+  ],
+  [
+   "Flou",
+   "Net"
+  ],
+  [
+   "Sombre",
+   "Lumineux"
+  ],
+  [
+   "Noir",
+   "Blanc"
+  ],
+  [
+   "Vide",
+   "Plein"
+  ],
+  [
+   "Lisse",
+   "Rugueux"
+  ],
+  [
+   "Pas cher à entretenir",
+   "Ruineux"
+  ],
+  [
+   "Gaspillage de temps",
+   "Temps bien utilisé"
+  ],
+  [
+   "Héros",
+   "Méchant"
+  ],
+  [
+   "Utile en soirée",
+   "Inutile en soirée"
+  ],
+  [
+   "Pas important",
+   "Vital"
+  ],
+  [
+   "Superflu",
+   "Essentiel"
+  ],
+  [
+   "Écœurant",
+   "Appétissant"
+  ],
+  [
+   "Cuisine ratée",
+   "Cuisine étoilée"
+  ],
+  [
+   "Fruit",
+   "Légume"
+  ],
+  [
+   "Petite ville",
+   "Grande ville"
+  ],
+  [
+   "Mauvais cadeau",
+   "Cadeau parfait"
+  ],
+  [
+   "Mauvais prénom de chien",
+   "Super prénom de chien"
+  ],
+  [
+   "Mauvais nom de groupe",
+   "Super nom de groupe"
+  ],
+  [
+   "Mauvaise excuse",
+   "Excuse parfaite"
+  ],
+  [
+   "Dispute légère",
+   "Dispute grave"
+  ],
+  [
+   "Pas sexy",
+   "Très sexy"
+  ],
+  [
+   "Pas pratique",
+   "Très pratique"
+  ],
+  [
+   "Jeu de société nul",
+   "Jeu de société génial"
+  ],
+  [
+   "Film d’horreur nul",
+   "Film d’horreur culte"
+  ],
+  [
+   "Chanson nulle",
+   "Tube"
+  ],
+  [
+   "Talent inutile",
+   "Talent incroyable"
+  ],
+  [
+   "Sain d’esprit",
+   "Complètement fou"
+  ],
+  [
+   "Lent à apprendre",
+   "Appris en 5 minutes"
+  ],
+  [
+   "Peu d’efforts",
+   "Beaucoup d’efforts"
+  ],
+  [
+   "Pas stressant",
+   "Hyper stressant"
+  ],
+  [
+   "Relaxant",
+   "Épuisant"
+  ],
+  [
+   "Bonne odeur",
+   "Mauvaise odeur"
+  ],
+  [
+   "Petit problème",
+   "Énorme problème"
+  ],
+  [
+   "Pas urgent",
+   "Très urgent"
+  ],
+  [
+   "Vieux",
+   "Jeune"
+  ],
+  [
+   "Calorique",
+   "Léger"
+  ],
+  [
+   "Tranquille",
+   "Aventureux"
+  ],
+  [
+   "Discret",
+   "Voyant"
+  ],
+  [
+   "Pas croyable",
+   "Totalement vrai"
+  ],
+  [
+   "Mythe",
+   "Réalité"
+  ],
+  [
+   "Abordable",
+   "Inaccessible"
+  ],
+  [
+   "Rassurant",
+   "Inquiétant"
+  ],
+  [
+   "Mal vu",
+   "Bien vu"
+  ],
+  [
+   "Impoli",
+   "Poli"
+  ],
+  [
+   "Pas cool",
+   "Trop cool"
+  ],
+  [
+   "Fait maison",
+   "Industriel"
+  ],
+  [
+   "Écologique",
+   "Polluant"
+  ],
+  [
+   "Sous la mer",
+   "Dans l’espace"
+  ],
+  [
+   "Préhistoire",
+   "Futur"
+  ],
+  [
+   "Nature",
+   "Technologie"
+  ],
+  [
+   "Sport collectif",
+   "Sport individuel"
+  ],
+  [
+   "Intellectuel",
+   "Physique"
+  ],
+  [
+   "Art",
+   "Science"
+  ],
+  [
+   "Paresseux",
+   "Bosseur"
+  ],
+  [
+   "Bon conducteur",
+   "Danger public"
+  ],
+  [
+   "Pas sociable",
+   "Très sociable"
+  ],
+  [
+   "Mauvais pour un premier rendez-vous",
+   "Parfait pour un premier rendez-vous"
+  ],
+  [
+   "Mauvais à la télé",
+   "Parfait à la télé"
+  ],
+  [
+   "Snob",
+   "Populaire"
+  ],
+  [
+   "Rond",
+   "Pointu"
+  ],
+  [
+   "Mou du genou",
+   "Plein d’énergie"
+  ],
+  [
+   "Bébé",
+   "Grand-parent"
+  ],
+  [
+   "Inoubliable",
+   "Vite oublié"
+  ],
+  [
+   "Petit plaisir",
+   "Grand bonheur"
+  ],
+  [
+   "Inconfortable",
+   "Confortable"
+  ],
+  [
+   "Pas rentable",
+   "Très rentable"
+  ],
+  [
+   "Peu probable",
+   "Très probable"
+  ],
+  [
+   "Qu’on rate",
+   "Qu’on réussit"
+  ],
+  [
+   "Insipide",
+   "Savoureux"
+  ],
+  [
+   "Gros mot léger",
+   "Gros mot très vulgaire"
+  ],
+  [
+   "Fait peur aux enfants",
+   "Fait rire les enfants"
+  ],
+  [
+   "Clair",
+   "Mystérieux"
+  ]
+ ]
+}

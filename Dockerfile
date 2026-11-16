@@ -22,6 +22,8 @@ COPY data/bluff.json ./data/bluff.json
 COPY data/geopin.json ./data/geopin.json
 COPY data/nomdecode.json ./data/nomdecode.json
 COPY data/motmystere.json ./data/motmystere.json
+COPY data/chronostars.json ./data/chronostars.json
+COPY data/memeonde.json ./data/memeonde.json
 COPY version.json ./
 
 # Dossier des images Top Meme, accessible en écriture par l'utilisateur non-root "node".
