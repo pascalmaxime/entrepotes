@@ -1,12 +1,13 @@
 {
   "_info": "Modifie ce fichier pour annoncer une nouvelle version : numéro, nom, date (AAAA-MM-JJ) et liste des nouveautés. C'est pris en compte immédiatement, sans redémarrer le serveur.",
-  "version": "0.5.0",
-  "name": "Bluff & 400 questions M-Culture (bêta)",
+  "version": "0.5.2",
+  "name": "Bluff & plein de nouvelles questions (bêta)",
   "date": "2026-11-16",
   "notes": [
     "Nouveau jeu « Bluff » (bêta) : une anecdote vraie avec un trou, chacun invente une fausse réponse crédible, puis on cherche la vraie au milieu des mensonges",
     "166 anecdotes vraies dans 8 thèmes (animaux, histoire, inventions, sciences, mots, monde, sport, bouffe), au choix de l’hôte",
     "+2 pts si tu trouves la vérité, +1 pt par joueur piégé, points doublés à la dernière question (option), bouton « Mentir pour moi » et mensonge de la soirée",
-    "M-Culture : 400 nouvelles questions (Culture G +140, Musique +80, Drapeaux +60, Carte +45, Rébus +45, Petit bac +30 catégories) — 1 000 au total"
+    "M-Culture : 400 nouvelles questions (Culture G +140, Musique +80, Drapeaux +60, Carte +45, Rébus +45, Petit bac +30 catégories) — 1 000 au total",
+    "Qui de nous / Tier List : 173 nouvelles questions, 500 au total"
   ]
 }
