@@ -130,7 +130,7 @@ function questionTitle(question) {
 // ----- Carte du monde (TopoJSON world-atlas décodé ici, sans librairie) -----
 
 let worldPromise = null;
-function loadWorld() {
+export function loadWorld() {
   worldPromise ??= fetch('/mculture/world-110m.json')
     .then((res) => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

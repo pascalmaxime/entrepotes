@@ -8,6 +8,7 @@ import { attachPaintSocket, buildPaintScreen, paintScreenKey, renderPaintSetting
 import { buildLoupGarouScreen, loupGarouScreenKey, renderLoupGarouFinal, renderLoupGarouSettings } from './loupgarou.js';
 import { buildCoqAneScreen, coqAneScreenKey, renderCoqAneSettings } from './coqane.js';
 import { bluffScreenKey, buildBluffScreen, renderBluffBest, renderBluffSettings } from './bluff.js';
+import { buildGeoPinScreen, geoPinScreenKey, renderGeoPinBest, renderGeoPinSettings } from './geopin.js';
 import { attachTicTacBoumSocket, buildTicTacBoumScreen, renderTicTacBoumFinal, renderTicTacBoumSettings, ticTacBoumScreenKey } from './tictacboum.js';
 
 const SESSION_KEY = 'entre-potes:session'; // sessionStorage : un joueur par onglet (pratique pour tester à plusieurs)
@@ -15,7 +16,7 @@ const NAME_KEY = 'entre-potes:name';
 const SEEN_VERSION_KEY = 'entre-potes:seen-version';
 const TIER_COLORS = ['var(--tier-1)', 'var(--tier-2)', 'var(--tier-3)', 'var(--tier-4)', 'var(--tier-5)'];
 const AVATAR_COLORS = ['#ff5ca8', '#4fd1ff', '#ffd23f', '#4ade80', '#fb923c', '#a78bfa', '#2dd4bf', '#f87171', '#60a5fa', '#f472b6'];
-const MODE_ICONS = { 'qui-de-nous': '🫵', 'tier-list': '🏆', 'top-meme': '🖼️', 'm-culture': '🧠', imposteur: '🕵️', 'juste-prix': '💰', paint: '🎨', 'loup-garou': '🐺', 'tic-tac-boum': '💣', 'coq-ane': '🐓', bluff: '🃏' };
+const MODE_ICONS = { 'qui-de-nous': '🫵', 'tier-list': '🏆', 'top-meme': '🖼️', 'm-culture': '🧠', imposteur: '🕵️', 'juste-prix': '💰', paint: '🎨', 'loup-garou': '🐺', 'tic-tac-boum': '💣', 'coq-ane': '🐓', bluff: '🃏', 'geo-pin': '📍' };
 
 const socket = io();
 
@@ -259,7 +260,9 @@ function render() {
   if (!isLoupGarou) document.querySelector('.app')?.classList.remove('is-night');
   const isCoqAne = kind === 'coq-ane' && lobby.state.startsWith('cc-');
   const isBluff = kind === 'bluff' && lobby.state.startsWith('bl-');
-  if (isBluff) memeView = (current) => buildBluffScreen(current, quizContext, state.quizUi);
+  const isGeoPin = kind === 'geo-pin' && lobby.state.startsWith('gp-');
+  if (isGeoPin) memeView = (current) => buildGeoPinScreen(current, quizContext);
+  else if (isBluff) memeView = (current) => buildBluffScreen(current, quizContext, state.quizUi);
   else if (isCoqAne) memeView = (current) => buildCoqAneScreen(current, quizContext);
   else if (isTicTacBoum) memeView = (current) => buildTicTacBoumScreen(current, quizContext);
   else if (isLoupGarou) memeView = (current) => buildLoupGarouScreen(current, quizContext);
@@ -269,7 +272,7 @@ function render() {
   else if (isQuiz) memeView = { quiz: (current) => buildQuizScreen(current, quizContext, state.quizUi) }[lobby.state];
   else memeView = { create: buildMemeCreate, vote: buildMemeVote }[lobby.state];
   if (memeView) {
-    const key = isBluff ? bluffScreenKey(lobby, state.quizUi) : isCoqAne ? coqAneScreenKey(lobby) : isTicTacBoum ? ticTacBoumScreenKey(lobby) : isLoupGarou ? loupGarouScreenKey(lobby) : isPaint ? paintScreenKey(lobby) : isJustePrix ? justePrixScreenKey(lobby, state.quizUi) : isImpostor ? impostorScreenKey(lobby) : isQuiz ? quizScreenKey(lobby, state.quizUi) : memeScreenKey(lobby);
+    const key = isGeoPin ? geoPinScreenKey(lobby) : isBluff ? bluffScreenKey(lobby, state.quizUi) : isCoqAne ? coqAneScreenKey(lobby) : isTicTacBoum ? ticTacBoumScreenKey(lobby) : isLoupGarou ? loupGarouScreenKey(lobby) : isPaint ? paintScreenKey(lobby) : isJustePrix ? justePrixScreenKey(lobby, state.quizUi) : isImpostor ? impostorScreenKey(lobby) : isQuiz ? quizScreenKey(lobby, state.quizUi) : memeScreenKey(lobby);
     if (state.memeScreen?.key !== key || !els.gameView.contains(state.memeScreen.el)) {
       const screen = memeView(lobby);
       state.memeScreen = { key, ...screen };
@@ -394,6 +397,7 @@ function renderLobby(lobby) {
       lobby.mode === 'imposteur' ? renderImpostorSettings(lobby, host, quizContext) : null,
       lobby.mode === 'juste-prix' ? renderJustePrixSettings(lobby, host, quizContext) : null,
       lobby.mode === 'bluff' ? renderBluffSettings(lobby, host, quizContext) : null,
+      lobby.mode === 'geo-pin' ? renderGeoPinSettings(lobby, host, quizContext) : null,
     ),
     isMeme ? renderLibraryCard(lobby) : null,
     host
@@ -743,7 +747,8 @@ function renderFinal(lobby) {
   const isPaint = final.type === 'paint';
   const isCoqAne = final.type === 'coq-ane';
   const isBluff = final.type === 'bluff';
-  const unit = (n) => (isTier || isMeme || isQuiz || isImpostor || isJustePrix || isPaint || isCoqAne || isBluff ? plural(n, 'pt', 'pts') : plural(n, 'vote', 'votes'));
+  const isGeoPin = final.type === 'geo-pin';
+  const unit = (n) => (isTier || isMeme || isQuiz || isImpostor || isJustePrix || isPaint || isCoqAne || isBluff || isGeoPin ? plural(n, 'pt', 'pts') : plural(n, 'vote', 'votes'));
   const [first, second, third] = final.ranking;
   const podium = [[second, 2], [first, 1], [third, 3]].filter(([entry]) => entry);
   if (final.type === 'loup-garou' && final.lg) return renderLoupGarouEnd(final);
@@ -756,7 +761,7 @@ function renderFinal(lobby) {
       'section',
       { class: 'question-card is-compact' },
       h('span', { class: 'eyebrow' }, 'Fin de la partie'),
-      h('h1', { class: 'question' }, isBluff ? 'Les rois du bluff' : isCoqAne ? 'Les artistes de la soirée' : isPaint ? 'Les Picasso de la soirée' : isJustePrix ? 'Les rois de l’estimation' : isImpostor ? 'Les meilleurs menteurs' : isQuiz ? 'Les cerveaux de la soirée' : isMeme ? 'Les rois du meme' : isTier ? 'Classement général' : 'Les plus désignés de la partie'),
+      h('h1', { class: 'question' }, isGeoPin ? 'Les meilleurs explorateurs' : isBluff ? 'Les rois du bluff' : isCoqAne ? 'Les artistes de la soirée' : isPaint ? 'Les Picasso de la soirée' : isJustePrix ? 'Les rois de l’estimation' : isImpostor ? 'Les meilleurs menteurs' : isQuiz ? 'Les cerveaux de la soirée' : isMeme ? 'Les rois du meme' : isTier ? 'Classement général' : 'Les plus désignés de la partie'),
     ),
     h(
       'section',
@@ -787,9 +792,10 @@ function renderFinal(lobby) {
       ),
     ),
     isBluff ? renderBluffBest(final, quizContext) : null,
+    isGeoPin ? renderGeoPinBest(final, quizContext) : null,
     isMeme
       ? renderMemeRecap(final)
-      : isQuiz || isJustePrix || isPaint || isCoqAne || isBluff
+      : isQuiz || isJustePrix || isPaint || isCoqAne || isBluff || isGeoPin
       ? renderQuizRecap(final, quizContext)
       : final.recap.length
       ? h(
@@ -1260,6 +1266,8 @@ const quizContext = {
   isHost,
   renderProgress,
   renderWaiting,
+  colorFor,
+  initials,
   rerender: () => render(),
   me: () => state.me,
 };

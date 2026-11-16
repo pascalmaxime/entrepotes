@@ -19,6 +19,7 @@ COPY data/justeprix.json ./data/justeprix.json
 COPY data/paint.json ./data/paint.json
 COPY data/tictacboum ./data/tictacboum
 COPY data/bluff.json ./data/bluff.json
+COPY data/geopin.json ./data/geopin.json
 COPY version.json ./
 
 # Dossier des images Top Meme, accessible en écriture par l'utilisateur non-root "node".

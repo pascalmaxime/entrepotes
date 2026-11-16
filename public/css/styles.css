@@ -1150,3 +1150,26 @@ input::placeholder { color: rgba(184, 176, 224, 0.55); }
 @keyframes bl-truth { 0% { opacity: 0; transform: scale(0.8); } 60% { opacity: 1; transform: scale(1.04); } 100% { transform: none; } }
 @keyframes bl-pop { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .bl-choice, .bl-reveal-card, .bl-next, .bl-scores, .bl-blank.is-filled { animation: none; } }
+
+/* ---------- Géo Pin ---------- */
+.gp-place { font-size: clamp(1.4rem, 5vw, 2rem); }
+.gp-hint { color: var(--muted); font-weight: 800; }
+.gp-map { position: relative; width: 100%; aspect-ratio: 3 / 2; border-radius: 16px; overflow: hidden; background: #1d4e7a; border: 2px solid var(--line); touch-action: none; user-select: none; -webkit-user-select: none; }
+.gp-map svg { width: 100%; height: 100%; display: block; cursor: grab; }
+.gp-map.is-pickable svg { cursor: crosshair; }
+.gp-map.is-locked svg { cursor: grab; }
+.gp-map .map-land { stroke-width: 0.5; }
+.gp-zoom { position: absolute; right: 8px; top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.gp-zoom button { width: 40px; height: 40px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.25); background: rgba(20, 16, 46, 0.85); color: #fff; font: inherit; font-size: 1.3rem; font-weight: 900; cursor: pointer; line-height: 1; }
+.gp-zoom button:active { transform: scale(0.94); }
+.gp-dot { stroke: #14102e; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.gp-pin.is-target .gp-dot { fill: #ffd23f; stroke: #fff; stroke-width: 2.5; }
+.gp-pin-label { text-anchor: middle; font-weight: 900; fill: #14102e; pointer-events: none; font-family: inherit; }
+.gp-line { stroke: rgba(255, 255, 255, 0.75); }
+.gp-tip { margin: 0; text-align: center; color: var(--muted); font-weight: 700; }
+.gp-map-error { position: absolute; inset: auto 0 12px 0; text-align: center; }
+.gp-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.gp-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 12px; background: var(--bg-2); }
+.gp-row.is-best { outline: 2px solid var(--tier-1); }
+.gp-km { margin-left: auto; color: var(--muted); font-weight: 800; }
+.gp-points { min-width: 4.2em; text-align: right; color: var(--tier-1); }

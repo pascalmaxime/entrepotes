@@ -9,13 +9,14 @@ import loupGarou from './loupGarou.js';
 import ticTacBoum from './ticTacBoum.js';
 import coqAne from './coqAne.js';
 import bluff from './bluff.js';
+import geoPin from './geoPin.js';
 
 // Pour ajouter un mode : créer son fichier puis l'ajouter à cette liste.
 // kind 'question' : une question + un vote (Qui de nous, Tier List) ; kind 'meme' : Top Meme ;
 // kind 'quiz' : M-Culture ; kind 'impostor' : L'Imposteur ; kind 'juste-prix' : Le Juste Prix ; kind 'paint' : Paint ;
 // kind 'loup-garou' : Loup-Garou ; kind 'tic-tac-boum' : Tic Tac Boum ;
-// kind 'coq-ane' : Du coq à l'âne ; kind 'bluff' : Bluff.
-const PLAYABLE = [quiDeNous, tierList, topMeme, mCulture, imposteur, justePrix, paint, loupGarou, ticTacBoum, coqAne, bluff];
+// kind 'coq-ane' : Du coq à l'âne ; kind 'bluff' : Bluff ; kind 'geo-pin' : Géo Pin.
+const PLAYABLE = [quiDeNous, tierList, topMeme, mCulture, imposteur, justePrix, paint, loupGarou, ticTacBoum, coqAne, bluff, geoPin];
 
 export const MODES = Object.fromEntries(PLAYABLE.map((mode) => [mode.id, mode]));
 export const DEFAULT_MODE = quiDeNous.id;
