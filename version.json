@@ -1,11 +1,12 @@
 {
   "_info": "Modifie ce fichier pour annoncer une nouvelle version : numéro, nom, date (AAAA-MM-JJ) et liste des nouveautés. C'est pris en compte immédiatement, sans redémarrer le serveur.",
-  "version": "0.5.4",
-  "name": "Géo Pin par régions (bêta)",
+  "version": "0.5.5",
+  "name": "Nom du code + Mot Mystère (bêta)",
   "date": "2026-11-16",
   "notes": [
-    "Nouveau jeu « Géo Pin » (bêta) : un lieu s’affiche, pose ton épingle sur la carte, le plus près possible",
-    "398 lieux : villes connues du monde, pays, monuments, et villes par région sur carte zoomée (Europe, Asie, Amérique, Afrique, France)",
-    "Carte à zoomer et déplacer, jusqu’à 1 000 pts par lieu selon la distance, indice au choix de l’hôte, épingle la plus précise à la fin"
+    "Nouveau jeu « Mot Mystère » (bêta), façon Motus : le même mot pour tous, 6 essais, en course",
+    "🟥 bien placée, 🟡 mal placée : tu vois la progression des autres en couleurs, jamais leurs lettres",
+    "836 mots de 5 à 8 lettres, première lettre donnée au choix, clavier à l’écran ou clavier de l’ordinateur",
+    "Toujours en bêta : « Nom de code », façon Codenames"
   ]
 }

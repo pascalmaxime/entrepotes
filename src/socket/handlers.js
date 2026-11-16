@@ -155,6 +155,15 @@ export function registerSocketHandlers(io, manager) {
       if (typed !== null) socket.to(room(lobby.code)).emit('tb:typing', { playerId, text: typed });
     });
     lobbyAction('gp:guess', (lobby, playerId, payload) => lobby.gpGuess(playerId, payload));
+    // Mot Mystère : les couleurs de l'essai reviennent tout de suite à celui qui joue.
+    on('mm:guess', (payload) => {
+      const { lobby, playerId } = context();
+      const result = lobby.mmGuess(playerId, payload);
+      broadcast(lobby);
+      return result;
+    });
+    lobbyAction('cn:clue', (lobby, playerId, payload) => lobby.cnClue(playerId, payload));
+    lobbyAction('cn:pick', (lobby, playerId, payload) => lobby.cnPick(playerId, payload));
     lobbyAction('bl:lie', (lobby, playerId, payload) => lobby.blLie(playerId, payload));
     lobbyAction('bl:vote', (lobby, playerId, payload) => lobby.blVote(playerId, payload));
     // « Mentir pour moi » : une idée de mensonge, envoyée seulement à celui qui la demande.

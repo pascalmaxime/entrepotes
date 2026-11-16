@@ -9,6 +9,8 @@ import { buildLoupGarouScreen, loupGarouScreenKey, renderLoupGarouFinal, renderL
 import { buildCoqAneScreen, coqAneScreenKey, renderCoqAneSettings } from './coqane.js';
 import { bluffScreenKey, buildBluffScreen, renderBluffBest, renderBluffSettings } from './bluff.js';
 import { buildGeoPinScreen, geoPinScreenKey, renderGeoPinBest, renderGeoPinSettings } from './geopin.js';
+import { buildNomDeCodeScreen, nomDeCodeScreenKey, renderNomDeCodeSettings } from './nomdecode.js';
+import { buildMotMystereScreen, motMystereScreenKey, renderMotMystereSettings } from './motmystere.js';
 import { attachTicTacBoumSocket, buildTicTacBoumScreen, renderTicTacBoumFinal, renderTicTacBoumSettings, ticTacBoumScreenKey } from './tictacboum.js';
 
 const SESSION_KEY = 'entre-potes:session'; // sessionStorage : un joueur par onglet (pratique pour tester à plusieurs)
@@ -16,7 +18,7 @@ const NAME_KEY = 'entre-potes:name';
 const SEEN_VERSION_KEY = 'entre-potes:seen-version';
 const TIER_COLORS = ['var(--tier-1)', 'var(--tier-2)', 'var(--tier-3)', 'var(--tier-4)', 'var(--tier-5)'];
 const AVATAR_COLORS = ['#ff5ca8', '#4fd1ff', '#ffd23f', '#4ade80', '#fb923c', '#a78bfa', '#2dd4bf', '#f87171', '#60a5fa', '#f472b6'];
-const MODE_ICONS = { 'qui-de-nous': '🫵', 'tier-list': '🏆', 'top-meme': '🖼️', 'm-culture': '🧠', imposteur: '🕵️', 'juste-prix': '💰', paint: '🎨', 'loup-garou': '🐺', 'tic-tac-boum': '💣', 'coq-ane': '🐓', bluff: '🃏', 'geo-pin': '📍' };
+const MODE_ICONS = { 'qui-de-nous': '🫵', 'tier-list': '🏆', 'top-meme': '🖼️', 'm-culture': '🧠', imposteur: '🕵️', 'juste-prix': '💰', paint: '🎨', 'loup-garou': '🐺', 'tic-tac-boum': '💣', 'coq-ane': '🐓', bluff: '🃏', 'geo-pin': '📍', 'nom-de-code': '🔐', 'mot-mystere': '🔤' };
 
 const socket = io();
 
@@ -256,12 +258,16 @@ function render() {
   // Paint a besoin de place : chat à gauche, tableau au milieu, joueurs à droite sur grand écran.
   const isLoupGarou = kind === 'loup-garou' && lobby.state.startsWith('lg-');
   const isTicTacBoum = kind === 'tic-tac-boum' && lobby.state.startsWith('tb-');
-  document.querySelector('.app')?.classList.toggle('is-wide', isPaint || isLoupGarou || isTicTacBoum);
+  const isNomDeCode = kind === 'nom-de-code' && lobby.state.startsWith('cn-');
+  const isMotMystere = kind === 'mot-mystere' && lobby.state.startsWith('mm-');
+  document.querySelector('.app')?.classList.toggle('is-wide', isPaint || isLoupGarou || isTicTacBoum || isNomDeCode);
   if (!isLoupGarou) document.querySelector('.app')?.classList.remove('is-night');
   const isCoqAne = kind === 'coq-ane' && lobby.state.startsWith('cc-');
   const isBluff = kind === 'bluff' && lobby.state.startsWith('bl-');
   const isGeoPin = kind === 'geo-pin' && lobby.state.startsWith('gp-');
-  if (isGeoPin) memeView = (current) => buildGeoPinScreen(current, quizContext);
+  if (isMotMystere) memeView = (current) => buildMotMystereScreen(current, quizContext);
+  else if (isNomDeCode) memeView = (current) => buildNomDeCodeScreen(current, quizContext);
+  else if (isGeoPin) memeView = (current) => buildGeoPinScreen(current, quizContext);
   else if (isBluff) memeView = (current) => buildBluffScreen(current, quizContext, state.quizUi);
   else if (isCoqAne) memeView = (current) => buildCoqAneScreen(current, quizContext);
   else if (isTicTacBoum) memeView = (current) => buildTicTacBoumScreen(current, quizContext);
@@ -272,7 +278,7 @@ function render() {
   else if (isQuiz) memeView = { quiz: (current) => buildQuizScreen(current, quizContext, state.quizUi) }[lobby.state];
   else memeView = { create: buildMemeCreate, vote: buildMemeVote }[lobby.state];
   if (memeView) {
-    const key = isGeoPin ? geoPinScreenKey(lobby) : isBluff ? bluffScreenKey(lobby, state.quizUi) : isCoqAne ? coqAneScreenKey(lobby) : isTicTacBoum ? ticTacBoumScreenKey(lobby) : isLoupGarou ? loupGarouScreenKey(lobby) : isPaint ? paintScreenKey(lobby) : isJustePrix ? justePrixScreenKey(lobby, state.quizUi) : isImpostor ? impostorScreenKey(lobby) : isQuiz ? quizScreenKey(lobby, state.quizUi) : memeScreenKey(lobby);
+    const key = isMotMystere ? motMystereScreenKey(lobby) : isNomDeCode ? nomDeCodeScreenKey(lobby) : isGeoPin ? geoPinScreenKey(lobby) : isBluff ? bluffScreenKey(lobby, state.quizUi) : isCoqAne ? coqAneScreenKey(lobby) : isTicTacBoum ? ticTacBoumScreenKey(lobby) : isLoupGarou ? loupGarouScreenKey(lobby) : isPaint ? paintScreenKey(lobby) : isJustePrix ? justePrixScreenKey(lobby, state.quizUi) : isImpostor ? impostorScreenKey(lobby) : isQuiz ? quizScreenKey(lobby, state.quizUi) : memeScreenKey(lobby);
     if (state.memeScreen?.key !== key || !els.gameView.contains(state.memeScreen.el)) {
       const screen = memeView(lobby);
       state.memeScreen = { key, ...screen };
@@ -393,7 +399,7 @@ function renderLobby(lobby) {
       host
         ? renderModePicker(lobby)
         : h('p', { class: 'mode-readonly' }, h('strong', {}, `${MODE_ICONS[mode.id] ?? ''} ${mode.label}`), h('br'), mode.description),
-      lobby.mode === 'm-culture' ? renderQuizSettings(lobby, host, quizContext) : lobby.mode === 'paint' ? renderPaintSettings(lobby, host, quizContext) : lobby.mode === 'loup-garou' ? renderLoupGarouSettings(lobby, host, quizContext) : lobby.mode === 'tic-tac-boum' ? renderTicTacBoumSettings(lobby, host, quizContext) : lobby.mode === 'coq-ane' ? renderCoqAneSettings(lobby, host, quizContext) : renderRounds(lobby, host),
+      lobby.mode === 'm-culture' ? renderQuizSettings(lobby, host, quizContext) : lobby.mode === 'paint' ? renderPaintSettings(lobby, host, quizContext) : lobby.mode === 'loup-garou' ? renderLoupGarouSettings(lobby, host, quizContext) : lobby.mode === 'tic-tac-boum' ? renderTicTacBoumSettings(lobby, host, quizContext) : lobby.mode === 'coq-ane' ? renderCoqAneSettings(lobby, host, quizContext) : lobby.mode === 'nom-de-code' ? renderNomDeCodeSettings(lobby, host, quizContext) : lobby.mode === 'mot-mystere' ? renderMotMystereSettings(lobby, host, quizContext) : renderRounds(lobby, host),
       lobby.mode === 'imposteur' ? renderImpostorSettings(lobby, host, quizContext) : null,
       lobby.mode === 'juste-prix' ? renderJustePrixSettings(lobby, host, quizContext) : null,
       lobby.mode === 'bluff' ? renderBluffSettings(lobby, host, quizContext) : null,
@@ -748,7 +754,9 @@ function renderFinal(lobby) {
   const isCoqAne = final.type === 'coq-ane';
   const isBluff = final.type === 'bluff';
   const isGeoPin = final.type === 'geo-pin';
-  const unit = (n) => (isTier || isMeme || isQuiz || isImpostor || isJustePrix || isPaint || isCoqAne || isBluff || isGeoPin ? plural(n, 'pt', 'pts') : plural(n, 'vote', 'votes'));
+  const isNomDeCode = final.type === 'nom-de-code';
+  const isMotMystere = final.type === 'mot-mystere';
+  const unit = (n) => (isTier || isMeme || isQuiz || isImpostor || isJustePrix || isPaint || isCoqAne || isBluff || isGeoPin || isNomDeCode || isMotMystere ? plural(n, 'pt', 'pts') : plural(n, 'vote', 'votes'));
   const [first, second, third] = final.ranking;
   const podium = [[second, 2], [first, 1], [third, 3]].filter(([entry]) => entry);
   if (final.type === 'loup-garou' && final.lg) return renderLoupGarouEnd(final);
@@ -761,7 +769,7 @@ function renderFinal(lobby) {
       'section',
       { class: 'question-card is-compact' },
       h('span', { class: 'eyebrow' }, 'Fin de la partie'),
-      h('h1', { class: 'question' }, isGeoPin ? 'Les meilleurs explorateurs' : isBluff ? 'Les rois du bluff' : isCoqAne ? 'Les artistes de la soirée' : isPaint ? 'Les Picasso de la soirée' : isJustePrix ? 'Les rois de l’estimation' : isImpostor ? 'Les meilleurs menteurs' : isQuiz ? 'Les cerveaux de la soirée' : isMeme ? 'Les rois du meme' : isTier ? 'Classement général' : 'Les plus désignés de la partie'),
+      h('h1', { class: 'question' }, isMotMystere ? 'Les champions du Mot Mystère' : isNomDeCode ? 'Les meilleurs espions' : isGeoPin ? 'Les meilleurs explorateurs' : isBluff ? 'Les rois du bluff' : isCoqAne ? 'Les artistes de la soirée' : isPaint ? 'Les Picasso de la soirée' : isJustePrix ? 'Les rois de l’estimation' : isImpostor ? 'Les meilleurs menteurs' : isQuiz ? 'Les cerveaux de la soirée' : isMeme ? 'Les rois du meme' : isTier ? 'Classement général' : 'Les plus désignés de la partie'),
     ),
     h(
       'section',
@@ -801,7 +809,7 @@ function renderFinal(lobby) {
       ? h(
           'section',
           { class: 'card' },
-          h('h2', {}, isImpostor ? 'Récap des manches' : 'Récap des questions'),
+          h('h2', {}, isImpostor || isNomDeCode ? 'Récap des manches' : isMotMystere ? 'Les mots de la partie' : 'Récap des questions'),
           h(
             'ul',
             { class: 'recap' },

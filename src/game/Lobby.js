@@ -16,6 +16,8 @@ import * as tb from '../tictacboum/engine.js';
 import * as cc from '../coqane/engine.js';
 import * as bl from '../bluff/engine.js';
 import * as gp from '../geopin/engine.js';
+import * as cn from '../nomdecode/engine.js';
+import * as mym from '../motmystere/engine.js';
 
 export const MAX_PLAYERS = 12;
 export const ROUNDS_LIMITS = Object.freeze({ min: 1, max: 20, default: 5 });
@@ -72,6 +74,8 @@ export class Lobby {
       coqAne: { ...cc.CC_LIMITS.defaults },
       bluff: bl.defaultSettings(),
       geoPin: gp.defaultSettings(),
+      nomDeCode: cn.defaultSettings(),
+      motMystere: mym.defaultSettings(),
     };
     this.state = 'lobby';
     this.game = null;
@@ -164,6 +168,8 @@ export class Lobby {
       if (this.game.kind === 'tic-tac-boum') tb.playerGone(this, playerId);
       if (this.game.kind === 'bluff') bl.playerGone(this, playerId);
       if (this.game.kind === 'geo-pin') gp.playerGone(this, playerId);
+      if (this.game.kind === 'nom-de-code') cn.playerGone(this, playerId);
+      if (this.game.kind === 'mot-mystere') mym.playerGone(this, playerId);
     }
     if (this.hostId === playerId) this.transferHost();
     if (this.isEmpty) this.hostId = null;
@@ -198,7 +204,7 @@ export class Lobby {
   }
 
   // Chaque réglage est facultatif : on ne modifie que ce qui est envoyé.
-  setSettings(playerId, { rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty, blCategories, blWrite, blVote, blDouble, gpCategories, gpTimer, gpHint } = {}) {
+  setSettings(playerId, { rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty, blCategories, blWrite, blVote, blDouble, gpCategories, gpTimer, gpHint, cnRounds, cnTimer, mmRounds, mmLength, mmTimer, mmFirst } = {}) {
     this.assertHost(playerId);
     this.assertOpen('Impossible de modifier les réglages pendant une partie.');
     const next = { ...this.settings };
@@ -264,6 +270,12 @@ export class Lobby {
     if ([gpCategories, gpTimer, gpHint].some((v) => v !== undefined)) {
       next.geoPin = gp.sanitizeSettings(next.geoPin, { gpCategories, gpTimer, gpHint });
     }
+    if ([mmRounds, mmLength, mmTimer, mmFirst].some((v) => v !== undefined)) {
+      next.motMystere = mym.sanitizeSettings(next.motMystere, { mmRounds, mmLength, mmTimer, mmFirst });
+    }
+    if ([cnRounds, cnTimer].some((v) => v !== undefined)) {
+      next.nomDeCode = cn.sanitizeSettings(next.nomDeCode, { cnRounds, cnTimer });
+    }
     if ([blCategories, blWrite, blVote, blDouble].some((v) => v !== undefined)) {
       next.bluff = bl.sanitizeSettings(next.bluff, { blCategories, blWrite, blVote, blDouble });
     }
@@ -289,7 +301,7 @@ export class Lobby {
       }
       next.loupGarou = l;
     }
-    if ([rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty, blCategories, blWrite, blVote, blDouble, gpCategories, gpTimer, gpHint].every((v) => v === undefined)) {
+    if ([rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty, blCategories, blWrite, blVote, blDouble, gpCategories, gpTimer, gpHint, cnRounds, cnTimer, mmRounds, mmLength, mmTimer, mmFirst].every((v) => v === undefined)) {
       throw new GameError('INVALID_SETTINGS', 'Aucun réglage à modifier.');
     }
     this.settings = next;
@@ -331,6 +343,16 @@ export class Lobby {
 
     if (mode.kind === 'geo-pin') {
       gp.startGeoPin(this, base);
+      return;
+    }
+
+    if (mode.kind === 'nom-de-code') {
+      cn.startNomDeCode(this, base);
+      return;
+    }
+
+    if (mode.kind === 'mot-mystere') {
+      mym.startMotMystere(this, base);
       return;
     }
 
@@ -383,6 +405,8 @@ export class Lobby {
     if (this.game?.kind === 'coq-ane') return cc.progress(this);
     if (this.game?.kind === 'bluff') return bl.progress(this);
     if (this.game?.kind === 'geo-pin') return gp.progress(this);
+    if (this.game?.kind === 'nom-de-code') return cn.progress(this);
+    if (this.game?.kind === 'mot-mystere') return mym.progress(this);
     if (this.game?.kind === 'impostor') return impostor.checkImpostorProgress(this);
     return false;
   }
@@ -711,6 +735,22 @@ export class Lobby {
     gp.submitGuess(this, playerId, payload);
   }
 
+  // --- Mode "mot-mystere" (Mot Mystère) ------------------------------------------------------
+
+  mmGuess(playerId, payload) {
+    return mym.submitGuess(this, playerId, payload);
+  }
+
+  // --- Mode "nom-de-code" (Nom de code) ------------------------------------------------------
+
+  cnClue(playerId, payload) {
+    cn.submitClue(this, playerId, payload);
+  }
+
+  cnPick(playerId, payload) {
+    cn.pick(this, playerId, payload);
+  }
+
   // --- Mode "bluff" (Bluff) ------------------------------------------------------------------
 
   blLie(playerId, payload) {
@@ -793,6 +833,10 @@ export class Lobby {
       this.revealMemes();
     } else if (this.state === 'quiz') {
       this.advanceQuiz(); // l'hôte passe la question
+    } else if (this.state === 'mm-play') {
+      mym.hostSkip(this); // l'hôte révèle le mot sans attendre
+    } else if (this.state === 'cn-clue' || this.state === 'cn-guess') {
+      cn.hostSkip(this); // l'hôte fait passer le tour (espion absent, équipe bloquée…)
     } else if (this.state === 'gp-guess') {
       gp.reveal(this); // l'hôte révèle sans attendre les retardataires
     } else if (this.state === 'bl-write' || this.state === 'bl-vote') {
@@ -830,6 +874,14 @@ export class Lobby {
     }
     if (this.state === 'gp-reveal') {
       gp.next(this);
+      return;
+    }
+    if (this.state === 'cn-end') {
+      cn.next(this);
+      return;
+    }
+    if (this.state === 'mm-reveal') {
+      mym.next(this);
       return;
     }
     if (this.state === 'paint-end') {
@@ -900,7 +952,7 @@ export class Lobby {
       mode: this.mode,
       settings: { ...this.settings },
       state,
-      limits: { maxPlayers: MAX_PLAYERS, rounds: { ...ROUNDS_LIMITS }, quiz: this.quizLimits(), impostor: this.impostorLimits(), justePrix: this.justePrixLimits(), paint: this.paintLimits(), loupGarou: this.loupGarouLimits(), ticTacBoum: OPEN_STATES.has(state) ? tb.tbLimits() : null, coqAne: OPEN_STATES.has(state) ? { ...cc.CC_LIMITS, minPlayers: cc.MIN_PLAYERS, players: this.connectedPlayers.length } : null, bluff: OPEN_STATES.has(state) && this.mode === 'bluff' ? bl.bluffLimits(this) : null, geoPin: OPEN_STATES.has(state) && this.mode === 'geo-pin' ? gp.geoPinLimits(this) : null },
+      limits: { maxPlayers: MAX_PLAYERS, rounds: { ...ROUNDS_LIMITS }, quiz: this.quizLimits(), impostor: this.impostorLimits(), justePrix: this.justePrixLimits(), paint: this.paintLimits(), loupGarou: this.loupGarouLimits(), ticTacBoum: OPEN_STATES.has(state) ? tb.tbLimits() : null, coqAne: OPEN_STATES.has(state) ? { ...cc.CC_LIMITS, minPlayers: cc.MIN_PLAYERS, players: this.connectedPlayers.length } : null, bluff: OPEN_STATES.has(state) && this.mode === 'bluff' ? bl.bluffLimits(this) : null, geoPin: OPEN_STATES.has(state) && this.mode === 'geo-pin' ? gp.geoPinLimits(this) : null, nomDeCode: OPEN_STATES.has(state) && this.mode === 'nom-de-code' ? cn.cnLimits(this) : null, motMystere: OPEN_STATES.has(state) && this.mode === 'mot-mystere' ? mym.mmLimits(this) : null },
       library: this.memeLibrary ? { count: this.memeLibrary.count } : null,
       players: [...this.players.values()].map(({ id, name, connected }) => ({
         id,
@@ -936,7 +988,9 @@ export class Lobby {
             coqAne: game.kind === 'coq-ane' ? cc.ccPublic(this, viewerId) : null,
             bluff: game.kind === 'bluff' ? bl.bluffPublic(this, viewerId) : null,
             geoPin: game.kind === 'geo-pin' ? gp.geoPinPublic(this, viewerId) : null,
-            result: state === 'results' || state === 'jp-reveal' || state === 'bl-reveal' || state === 'gp-reveal' ? game.result : null,
+            nomDeCode: game.kind === 'nom-de-code' ? cn.cnPublic(this, viewerId) : null,
+            motMystere: game.kind === 'mot-mystere' ? mym.mmPublic(this, viewerId) : null,
+            result: state === 'results' || state === 'jp-reveal' || state === 'bl-reveal' || state === 'gp-reveal' || state === 'mm-reveal' ? game.result : null,
             final: state === 'finished' ? game.final : null,
           }
         : null,
