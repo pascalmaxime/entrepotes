@@ -1111,3 +1111,42 @@ input::placeholder { color: rgba(184, 176, 224, 0.55); }
 .cc-ok { color: var(--tier-1); font-weight: 900; }
 .cc-verdict { text-align: center; font-weight: 900; font-size: 1.15rem; }
 .cc-verdict.is-success { border-color: var(--tier-1); color: var(--tier-1); }
+
+/* ---------- Bluff ---------- */
+.bl-sentence { line-height: 1.35; }
+.bl-blank { display: inline-block; min-width: 3.2em; margin: 0 0.15em; padding: 0 0.4em; border-bottom: 4px dashed var(--accent); color: var(--accent); text-align: center; }
+.bl-blank.is-filled { border-bottom-style: solid; border-color: var(--tier-1); color: var(--tier-1); animation: bl-pop 0.5s ease-out both; animation-delay: calc(var(--reveal-at, 0) * 1s); }
+.bl-tip { margin: 0; color: var(--muted); font-weight: 700; }
+.bl-tip strong { color: var(--accent); }
+.bl-tip-center { text-align: center; }
+.bl-write { display: flex; flex-direction: column; gap: 12px; }
+.bl-idea { align-self: center; }
+.bl-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.bl-choice { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 76px; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--line); background: var(--card); color: var(--text); font: inherit; font-weight: 800; font-size: 1.1rem; text-align: center; cursor: pointer; animation: bl-in 0.35s ease-out both; animation-delay: calc(var(--i) * 70ms); transition: transform 0.12s, border-color 0.12s, background 0.12s; }
+.bl-choice:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--cyan); }
+.bl-choice.is-picked { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, var(--card)); }
+.bl-choice.is-mine { opacity: 0.55; cursor: not-allowed; border-style: dashed; }
+.bl-tag { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px; border-radius: 999px; background: rgba(0, 0, 0, 0.3); color: var(--muted); }
+.bl-tag-pick { background: var(--accent); color: var(--accent-ink); }
+.bl-reveal { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.bl-reveal-card { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 16px; background: var(--card); border: 2px solid var(--line); animation: bl-in 0.45s ease-out both; animation-delay: calc(var(--i) * 0.9s); }
+.bl-reveal-card.is-trap { border-color: var(--pink); }
+.bl-reveal-card.is-truth { border-color: var(--tier-1); background: color-mix(in srgb, var(--tier-1) 14%, var(--card)); animation-name: bl-truth; animation-duration: 0.7s; }
+.bl-reveal-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
+.bl-reveal-text { font-size: 1.25rem; }
+.bl-who { font-weight: 900; color: var(--muted); font-size: 0.9rem; }
+.bl-who-truth { color: var(--tier-1); }
+.bl-reveal-votes { display: flex; flex-direction: column; gap: 6px; }
+.bl-reveal-votes small, .bl-nobody { color: var(--muted); font-weight: 700; }
+.bl-voters { display: flex; flex-wrap: wrap; gap: 6px; }
+.bl-voter { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; border-radius: 999px; background: var(--bg-2); font-weight: 800; font-size: 0.9rem; }
+.bl-gain { align-self: flex-start; font-weight: 900; padding: 3px 10px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); }
+.bl-next, .bl-scores { animation: bl-in 0.4s ease-out both; animation-delay: calc(var(--i) * 0.9s); }
+.bl-plus { color: var(--tier-1); font-weight: 900; margin-left: auto; margin-right: 8px; }
+.bl-best { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; border-color: var(--pink); }
+.bl-best-text { font-size: 1.4rem; color: var(--pink); }
+.bl-best p { margin: 0; color: var(--muted); font-weight: 700; }
+@keyframes bl-in { from { opacity: 0; transform: translateY(12px) scale(0.97); } to { opacity: 1; transform: none; } }
+@keyframes bl-truth { 0% { opacity: 0; transform: scale(0.8); } 60% { opacity: 1; transform: scale(1.04); } 100% { transform: none; } }
+@keyframes bl-pop { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .bl-choice, .bl-reveal-card, .bl-next, .bl-scores, .bl-blank.is-filled { animation: none; } }

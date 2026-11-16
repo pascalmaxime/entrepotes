@@ -14,6 +14,7 @@ import * as paint from '../paint/engine.js';
 import * as lg from '../loupgarou/engine.js';
 import * as tb from '../tictacboum/engine.js';
 import * as cc from '../coqane/engine.js';
+import * as bl from '../bluff/engine.js';
 
 export const MAX_PLAYERS = 12;
 export const ROUNDS_LIMITS = Object.freeze({ min: 1, max: 20, default: 5 });
@@ -68,6 +69,7 @@ export class Lobby {
       loupGarou: { custom: null, ...lg.LG_LIMITS.defaults }, // custom null = composition recommandée
       ticTacBoum: { ...tb.TB_LIMITS.defaults, positions: [...tb.TB_LIMITS.defaults.positions] },
       coqAne: { ...cc.CC_LIMITS.defaults },
+      bluff: bl.defaultSettings(),
     };
     this.state = 'lobby';
     this.game = null;
@@ -158,6 +160,7 @@ export class Lobby {
       if (this.game.kind === 'paint') paint.playerGone(this, playerId);
       if (this.game.kind === 'loup-garou') lg.playerGone(this, playerId);
       if (this.game.kind === 'tic-tac-boum') tb.playerGone(this, playerId);
+      if (this.game.kind === 'bluff') bl.playerGone(this, playerId);
     }
     if (this.hostId === playerId) this.transferHost();
     if (this.isEmpty) this.hostId = null;
@@ -192,7 +195,7 @@ export class Lobby {
   }
 
   // Chaque réglage est facultatif : on ne modifie que ce qui est envoyé.
-  setSettings(playerId, { rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty } = {}) {
+  setSettings(playerId, { rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty, blCategories, blWrite, blVote, blDouble } = {}) {
     this.assertHost(playerId);
     this.assertOpen('Impossible de modifier les réglages pendant une partie.');
     const next = { ...this.settings };
@@ -255,6 +258,9 @@ export class Lobby {
       }
       next.paint = p;
     }
+    if ([blCategories, blWrite, blVote, blDouble].some((v) => v !== undefined)) {
+      next.bluff = bl.sanitizeSettings(next.bluff, { blCategories, blWrite, blVote, blDouble });
+    }
     if ([ccDraw, ccGuess, ccDifficulty].some((v) => v !== undefined)) {
       next.coqAne = cc.sanitizeSettings(next.coqAne, { ccDraw, ccGuess, ccDifficulty });
     }
@@ -277,7 +283,7 @@ export class Lobby {
       }
       next.loupGarou = l;
     }
-    if ([rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty].every((v) => v === undefined)) {
+    if ([rounds, questions, timer, categories, impostors, whites, clueMode, jpCategories, jpTimer, paintTurns, paintTimer, lgCustom, lgMayor, lgNight, lgDebate, tbLives, tbFuse, tbDifficulty, tbPositions, ccDraw, ccGuess, ccDifficulty, blCategories, blWrite, blVote, blDouble].every((v) => v === undefined)) {
       throw new GameError('INVALID_SETTINGS', 'Aucun réglage à modifier.');
     }
     this.settings = next;
@@ -309,6 +315,11 @@ export class Lobby {
 
     if (mode.kind === 'coq-ane') {
       cc.startCoqAne(this, base);
+      return;
+    }
+
+    if (mode.kind === 'bluff') {
+      bl.startBluff(this, base);
       return;
     }
 
@@ -359,6 +370,7 @@ export class Lobby {
     if (this.game?.kind === 'loup-garou' && this.state !== 'finished') return lg.progress(this);
     if (this.game?.kind === 'tic-tac-boum') return tb.progress(this);
     if (this.game?.kind === 'coq-ane') return cc.progress(this);
+    if (this.game?.kind === 'bluff') return bl.progress(this);
     if (this.game?.kind === 'impostor') return impostor.checkImpostorProgress(this);
     return false;
   }
@@ -681,6 +693,20 @@ export class Lobby {
     cc.revealAll(this, playerId);
   }
 
+  // --- Mode "bluff" (Bluff) ------------------------------------------------------------------
+
+  blLie(playerId, payload) {
+    bl.submitLie(this, playerId, payload);
+  }
+
+  blSuggest(playerId) {
+    return bl.suggestLie(this, playerId);
+  }
+
+  blVote(playerId, payload) {
+    bl.submitVote(this, playerId, payload);
+  }
+
   // --- Mode "tic-tac-boum" -------------------------------------------------------------------
 
   tbWord(playerId, text) {
@@ -749,6 +775,8 @@ export class Lobby {
       this.revealMemes();
     } else if (this.state === 'quiz') {
       this.advanceQuiz(); // l'hôte passe la question
+    } else if (this.state === 'bl-write' || this.state === 'bl-vote') {
+      bl.hostSkip(this); // l'hôte passe au vote / à la révélation sans attendre
     } else if (this.state === 'cc-step') {
       cc.hostSkip(this); // l'hôte fait tourner les carnets sans attendre
     } else if (this.state.startsWith('tb-')) {
@@ -774,6 +802,10 @@ export class Lobby {
     }
     if (this.state === 'cc-reveal') {
       cc.revealNext(this, playerId);
+      return;
+    }
+    if (this.state === 'bl-reveal') {
+      bl.next(this);
       return;
     }
     if (this.state === 'paint-end') {
@@ -844,7 +876,7 @@ export class Lobby {
       mode: this.mode,
       settings: { ...this.settings },
       state,
-      limits: { maxPlayers: MAX_PLAYERS, rounds: { ...ROUNDS_LIMITS }, quiz: this.quizLimits(), impostor: this.impostorLimits(), justePrix: this.justePrixLimits(), paint: this.paintLimits(), loupGarou: this.loupGarouLimits(), ticTacBoum: OPEN_STATES.has(state) ? tb.tbLimits() : null, coqAne: OPEN_STATES.has(state) ? { ...cc.CC_LIMITS, minPlayers: cc.MIN_PLAYERS, players: this.connectedPlayers.length } : null },
+      limits: { maxPlayers: MAX_PLAYERS, rounds: { ...ROUNDS_LIMITS }, quiz: this.quizLimits(), impostor: this.impostorLimits(), justePrix: this.justePrixLimits(), paint: this.paintLimits(), loupGarou: this.loupGarouLimits(), ticTacBoum: OPEN_STATES.has(state) ? tb.tbLimits() : null, coqAne: OPEN_STATES.has(state) ? { ...cc.CC_LIMITS, minPlayers: cc.MIN_PLAYERS, players: this.connectedPlayers.length } : null, bluff: OPEN_STATES.has(state) && this.mode === 'bluff' ? bl.bluffLimits(this) : null },
       library: this.memeLibrary ? { count: this.memeLibrary.count } : null,
       players: [...this.players.values()].map(({ id, name, connected }) => ({
         id,
@@ -878,7 +910,8 @@ export class Lobby {
             loupGarou: game.kind === 'loup-garou' ? lg.lgPublic(this, viewerId) : null,
             ticTacBoum: game.kind === 'tic-tac-boum' ? tb.tbPublic(this) : null,
             coqAne: game.kind === 'coq-ane' ? cc.ccPublic(this, viewerId) : null,
-            result: state === 'results' || state === 'jp-reveal' ? game.result : null,
+            bluff: game.kind === 'bluff' ? bl.bluffPublic(this, viewerId) : null,
+            result: state === 'results' || state === 'jp-reveal' || state === 'bl-reveal' ? game.result : null,
             final: state === 'finished' ? game.final : null,
           }
         : null,

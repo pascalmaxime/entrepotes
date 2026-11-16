@@ -154,6 +154,13 @@ export function registerSocketHandlers(io, manager) {
       const typed = lobby.tbTyping(playerId, text);
       if (typed !== null) socket.to(room(lobby.code)).emit('tb:typing', { playerId, text: typed });
     });
+    lobbyAction('bl:lie', (lobby, playerId, payload) => lobby.blLie(playerId, payload));
+    lobbyAction('bl:vote', (lobby, playerId, payload) => lobby.blVote(playerId, payload));
+    // « Mentir pour moi » : une idée de mensonge, envoyée seulement à celui qui la demande.
+    on('bl:suggest', () => {
+      const { lobby, playerId } = context();
+      return { text: lobby.blSuggest(playerId) };
+    });
     lobbyAction('cc:submit', (lobby, playerId, payload) => lobby.ccSubmit(playerId, payload));
     lobbyAction('cc:reveal-all', (lobby, playerId) => lobby.ccRevealAll(playerId));
     lobbyAction('lg:action', (lobby, playerId, payload) => lobby.lgAct(playerId, payload));

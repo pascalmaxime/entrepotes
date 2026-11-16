@@ -1,0 +1,2395 @@
+{
+ "_info": "Bluff : chaque question a un trou (_____). « a » = la vraie réponse, « alt » = autres façons de l'écrire (refusées comme mensonge), « fake » = leurres du jeu quand il y a peu de joueurs. Fichier relu automatiquement s'il change.",
+ "questions": [
+  {
+   "cat": "animaux",
+   "q": "Le cœur d'une crevette se trouve dans sa _____.",
+   "a": "tête",
+   "alt": [],
+   "fake": [
+    "queue",
+    "carapace",
+    "patte arrière"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Les crottes de wombat ont la forme de _____.",
+   "a": "cubes",
+   "alt": [
+    "cube",
+    "carrés",
+    "dés"
+   ],
+   "fake": [
+    "spirales",
+    "étoiles",
+    "pyramides"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Le poulpe possède _____ cœurs.",
+   "a": "trois",
+   "alt": [
+    "3"
+   ],
+   "fake": [
+    "deux",
+    "huit",
+    "neuf"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Le sang du poulpe est de couleur _____.",
+   "a": "bleue",
+   "alt": [
+    "bleu"
+   ],
+   "fake": [
+    "verte",
+    "violette",
+    "transparente"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Pour ne pas dériver en dormant, les loutres de mer se tiennent par _____.",
+   "a": "la main",
+   "alt": [
+    "les mains",
+    "la patte",
+    "les pattes"
+   ],
+   "fake": [
+    "la queue",
+    "les moustaches",
+    "le cou"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Les papillons goûtent leur nourriture avec leurs _____.",
+   "a": "pattes",
+   "alt": [
+    "pieds"
+   ],
+   "fake": [
+    "ailes",
+    "antennes",
+    "yeux"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Les chats sont incapables de sentir le goût _____.",
+   "a": "sucré",
+   "alt": [
+    "du sucre",
+    "sucre"
+   ],
+   "fake": [
+    "salé",
+    "amer",
+    "épicé"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Les flamants roses sont roses à cause de _____.",
+   "a": "ce qu'ils mangent",
+   "alt": [
+    "leur alimentation",
+    "leur nourriture",
+    "la nourriture",
+    "les crevettes",
+    "crevettes"
+   ],
+   "fake": [
+    "la boue",
+    "leur sang",
+    "un coup de soleil"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Sous leur fourrure blanche, les ours polaires ont la peau _____.",
+   "a": "noire",
+   "alt": [
+    "noir"
+   ],
+   "fake": [
+    "rose",
+    "bleue",
+    "grise"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "La langue d'une girafe est de couleur _____.",
+   "a": "bleu-violet",
+   "alt": [
+    "violette",
+    "violet",
+    "bleue",
+    "bleu",
+    "noire",
+    "bleu foncé"
+   ],
+   "fake": [
+    "orange",
+    "jaune",
+    "rouge vif"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Le colibri est le seul oiseau capable de voler _____.",
+   "a": "en arrière",
+   "alt": [
+    "à reculons",
+    "en marche arrière"
+   ],
+   "fake": [
+    "en dormant",
+    "sous l'eau",
+    "sans battre des ailes"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Pour séduire une femelle, le manchot papou lui offre _____.",
+   "a": "un caillou",
+   "alt": [
+    "une pierre",
+    "un galet"
+   ],
+   "fake": [
+    "un poisson",
+    "une plume",
+    "un coquillage"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Les dauphins dorment avec _____.",
+   "a": "un œil ouvert",
+   "alt": [
+    "un oeil ouvert",
+    "la moitié du cerveau éveillée"
+   ],
+   "fake": [
+    "la bouche ouverte",
+    "la tête hors de l'eau",
+    "leur maman"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "L'éléphant est l'un des rares mammifères incapables de _____.",
+   "a": "sauter",
+   "alt": [],
+   "fake": [
+    "nager",
+    "se coucher",
+    "éternuer"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Le crocodile est incapable de _____.",
+   "a": "tirer la langue",
+   "alt": [
+    "sortir la langue"
+   ],
+   "fake": [
+    "nager sous l'eau",
+    "fermer les yeux",
+    "dormir"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "L'axolotl, une salamandre mexicaine, peut _____.",
+   "a": "faire repousser ses membres",
+   "alt": [
+    "repousser ses membres",
+    "faire repousser ses pattes",
+    "repousser ses pattes",
+    "régénérer ses membres"
+   ],
+   "fake": [
+    "vivre 200 ans",
+    "voler sur deux mètres",
+    "changer de couleur à volonté"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Les rats poussent de petits cris de rire quand on les _____.",
+   "a": "chatouille",
+   "alt": [
+    "chatouiller",
+    "chatouilles"
+   ],
+   "fake": [
+    "siffle",
+    "met dans l'eau",
+    "regarde dans les yeux"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Le tardigrade, un animal quasi indestructible, est surnommé _____.",
+   "a": "l'ourson d'eau",
+   "alt": [
+    "ourson d'eau",
+    "ours d'eau"
+   ],
+   "fake": [
+    "le cafard de l'espace",
+    "la puce éternelle",
+    "le zombie des mers"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Un chat nommé Stubbs a été pendant 20 ans _____ d'une petite ville d'Alaska.",
+   "a": "le maire",
+   "alt": [
+    "maire",
+    "maire honoraire"
+   ],
+   "fake": [
+    "le shérif",
+    "le facteur",
+    "le pompier"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Sir Nils Olav, un manchot du zoo d'Édimbourg, a été fait _____ par l'armée norvégienne.",
+   "a": "chevalier",
+   "alt": [
+    "général",
+    "brigadier",
+    "général de brigade"
+   ],
+   "fake": [
+    "amiral",
+    "pilote d'honneur",
+    "garde royal"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Pendant la Seconde Guerre mondiale, l'armée polonaise a enrôlé un _____ qui portait des caisses d'obus.",
+   "a": "ours",
+   "alt": [
+    "ours brun"
+   ],
+   "fake": [
+    "chameau",
+    "éléphant",
+    "gorille"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Le chien japonais Hachikō a attendu son maître mort à la gare pendant _____.",
+   "a": "près de dix ans",
+   "alt": [
+    "10 ans",
+    "dix ans",
+    "9 ans",
+    "neuf ans"
+   ],
+   "fake": [
+    "trois jours",
+    "un mois",
+    "toute une nuit"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "En 2010, Paul le poulpe est devenu célèbre en prédisant _____.",
+   "a": "les matchs de la Coupe du monde",
+   "alt": [
+    "les résultats de la Coupe du monde",
+    "les matchs de foot",
+    "les résultats de foot",
+    "les matchs"
+   ],
+   "fake": [
+    "la météo",
+    "les numéros du loto",
+    "les élections"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Les empreintes digitales du koala ressemblent presque parfaitement à celles _____.",
+   "a": "des humains",
+   "alt": [
+    "de l'homme",
+    "humaines",
+    "des hommes"
+   ],
+   "fake": [
+    "des pandas",
+    "des chiens",
+    "des kangourous"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "Les hippopotames sécrètent une substance rouge surnommée _____.",
+   "a": "la sueur de sang",
+   "alt": [
+    "sueur de sang",
+    "sueur rouge"
+   ],
+   "fake": [
+    "le lait rose",
+    "la bave de feu",
+    "le jus de rivière"
+   ]
+  },
+  {
+   "cat": "animaux",
+   "q": "La méduse Turritopsis dohrnii est surnommée la méduse _____.",
+   "a": "immortelle",
+   "alt": [],
+   "fake": [
+    "invisible",
+    "électrique",
+    "volante"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Lors d'une partie de chasse, Napoléon a été attaqué par une horde de _____.",
+   "a": "lapins",
+   "alt": [
+    "lapin"
+   ],
+   "fake": [
+    "canards",
+    "sangliers",
+    "moutons"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "En 1932, l'armée australienne a perdu une « guerre » contre des _____.",
+   "a": "émeus",
+   "alt": [
+    "émeu"
+   ],
+   "fake": [
+    "kangourous",
+    "koalas",
+    "dingos"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "La guerre la plus courte de l'histoire, entre le Royaume-Uni et Zanzibar, a duré environ _____.",
+   "a": "38 minutes",
+   "alt": [
+    "40 minutes",
+    "45 minutes",
+    "trente-huit minutes"
+   ],
+   "fake": [
+    "3 heures",
+    "2 jours",
+    "12 minutes"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "À sa construction, la tour Eiffel ne devait rester debout que _____.",
+   "a": "20 ans",
+   "alt": [
+    "vingt ans"
+   ],
+   "fake": [
+    "6 mois",
+    "le temps de l'Exposition",
+    "50 ans"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Au Moyen Âge, en Europe, on organisait de vrais procès contre _____.",
+   "a": "des animaux",
+   "alt": [
+    "les animaux",
+    "animaux",
+    "des cochons",
+    "des porcs"
+   ],
+   "fake": [
+    "des statues",
+    "des arbres",
+    "des nuages"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Le tsar Pierre le Grand a créé un impôt sur _____.",
+   "a": "les barbes",
+   "alt": [
+    "la barbe",
+    "barbes"
+   ],
+   "fake": [
+    "les chapeaux",
+    "les moustaches",
+    "les chats"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Dans la Rome antique, on se blanchissait les dents avec de l'_____.",
+   "a": "urine",
+   "alt": [
+    "pipi"
+   ],
+   "fake": [
+    "eau de mer",
+    "huile d'olive",
+    "encre de seiche"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Cléopâtre a vécu plus près des premiers pas sur la Lune que de la construction de _____.",
+   "a": "la grande pyramide",
+   "alt": [
+    "la pyramide de Khéops",
+    "les pyramides",
+    "pyramides",
+    "la pyramide"
+   ],
+   "fake": [
+    "la muraille de Chine",
+    "Rome",
+    "l'Acropole"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Le premier réveil mécanique américain, en 1787, ne pouvait sonner qu'à _____.",
+   "a": "4 heures du matin",
+   "alt": [
+    "4h",
+    "4 h",
+    "quatre heures",
+    "4 heures"
+   ],
+   "fake": [
+    "midi",
+    "6 heures",
+    "minuit"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Contrairement à la légende, les Vikings ne portaient pas de _____.",
+   "a": "casques à cornes",
+   "alt": [
+    "casque à cornes",
+    "cornes"
+   ],
+   "fake": [
+    "pantalons",
+    "barbes tressées",
+    "bijoux"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Après le vol de la Joconde en 1911, la police a interrogé le peintre _____.",
+   "a": "Picasso",
+   "alt": [
+    "Pablo Picasso"
+   ],
+   "fake": [
+    "Monet",
+    "Dalí",
+    "Matisse"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "La Joconde a été volée en 1911 par _____.",
+   "a": "un vitrier qui travaillait au Louvre",
+   "alt": [
+    "un vitrier",
+    "un employé du Louvre",
+    "un ouvrier du Louvre",
+    "vitrier"
+   ],
+   "fake": [
+    "un gardien de nuit",
+    "un touriste américain",
+    "un moine"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "La dernière exécution à la guillotine en France a eu lieu en _____.",
+   "a": "1977",
+   "alt": [],
+   "fake": [
+    "1939",
+    "1902",
+    "1958"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Louis XIV portait des chaussures à talons _____ pour montrer son rang.",
+   "a": "rouges",
+   "alt": [
+    "rouge"
+   ],
+   "fake": [
+    "dorés",
+    "de 20 centimètres",
+    "en argent"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Dans les toilettes publiques romaines, on s'essuyait avec _____.",
+   "a": "une éponge sur un bâton",
+   "alt": [
+    "une éponge",
+    "éponge",
+    "tersorium"
+   ],
+   "fake": [
+    "du papyrus",
+    "des toges usées",
+    "des feuilles de vigne"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Au XIXe siècle, le ketchup était vendu en pharmacie comme _____.",
+   "a": "médicament",
+   "alt": [
+    "un médicament",
+    "remède",
+    "un remède",
+    "pilules"
+   ],
+   "fake": [
+    "produit de beauté",
+    "teinture pour cheveux",
+    "engrais"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Les premières carottes cultivées étaient de couleur _____.",
+   "a": "violette",
+   "alt": [
+    "violet",
+    "violettes",
+    "pourpre",
+    "jaune"
+   ],
+   "fake": [
+    "bleue",
+    "verte",
+    "grise"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "En Europe, la tomate a longtemps été considérée comme _____.",
+   "a": "toxique",
+   "alt": [
+    "poison",
+    "empoisonnée",
+    "vénéneuse"
+   ],
+   "fake": [
+    "porte-malheur",
+    "nourriture de prison",
+    "un remède contre la peste"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "La structure intérieure de la statue de la Liberté a été conçue par _____.",
+   "a": "Gustave Eiffel",
+   "alt": [
+    "Eiffel"
+   ],
+   "fake": [
+    "Auguste Rodin",
+    "Louis Pasteur",
+    "Jules Verne"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Avant d'être un musée, le Louvre était _____.",
+   "a": "une forteresse",
+   "alt": [
+    "un château fort",
+    "un fort",
+    "forteresse",
+    "un château",
+    "palais",
+    "un palais",
+    "palais royal"
+   ],
+   "fake": [
+    "une prison",
+    "un marché couvert",
+    "une écurie royale"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Le premier chemin de fer de France, en 1827, reliait Saint-Étienne à _____.",
+   "a": "Andrézieux",
+   "alt": [
+    "Andrezieux",
+    "Andrézieux-Bouthéon"
+   ],
+   "fake": [
+    "Lyon",
+    "Roanne",
+    "Firminy"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Selon les historiens romains, l'empereur Caligula voulait nommer son cheval _____.",
+   "a": "consul",
+   "alt": [],
+   "fake": [
+    "empereur",
+    "général",
+    "grand prêtre"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Le tout premier tweet de l'histoire a été publié en _____.",
+   "a": "2006",
+   "alt": [],
+   "fake": [
+    "2004",
+    "2009",
+    "2001"
+   ]
+  },
+  {
+   "cat": "histoire",
+   "q": "Les premiers êtres vivants envoyés dans l'espace, en 1947, étaient des _____.",
+   "a": "mouches",
+   "alt": [
+    "mouches à fruits",
+    "drosophiles",
+    "moucherons"
+   ],
+   "fake": [
+    "souris",
+    "singes",
+    "grenouilles"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Avant les jeux vidéo, Nintendo fabriquait _____.",
+   "a": "des cartes à jouer",
+   "alt": [
+    "cartes à jouer",
+    "des cartes",
+    "cartes"
+   ],
+   "fake": [
+    "des parapluies",
+    "des montres",
+    "des vélos"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Avant les voitures de sport, Lamborghini fabriquait _____.",
+   "a": "des tracteurs",
+   "alt": [
+    "tracteurs"
+   ],
+   "fake": [
+    "des motos",
+    "des bateaux",
+    "des tondeuses"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Avant les téléphones, Nokia fabriquait _____.",
+   "a": "du papier",
+   "alt": [
+    "papier",
+    "de la pâte à papier",
+    "des bottes en caoutchouc",
+    "des câbles"
+   ],
+   "fake": [
+    "des skis",
+    "des montres",
+    "des cuillères"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Samsung a commencé en vendant _____.",
+   "a": "du poisson séché",
+   "alt": [
+    "poisson séché",
+    "des nouilles",
+    "nouilles",
+    "du poisson",
+    "des légumes"
+   ],
+   "fake": [
+    "des parapluies",
+    "des vélos",
+    "des radios"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Avant de faire des voitures, Peugeot fabriquait déjà _____.",
+   "a": "des moulins à poivre",
+   "alt": [
+    "moulins à poivre",
+    "des moulins à café",
+    "moulins",
+    "des outils",
+    "des vélos",
+    "des scies",
+    "des baleines de corset"
+   ],
+   "fake": [
+    "des machines à laver",
+    "des montres",
+    "des pianos"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le guide Michelin a été créé pour _____.",
+   "a": "faire rouler les gens et user leurs pneus",
+   "alt": [
+    "vendre des pneus",
+    "faire rouler les automobilistes",
+    "user les pneus",
+    "aider les automobilistes",
+    "vendre plus de pneus"
+   ],
+   "fake": [
+    "noter les hôtels de luxe",
+    "conseiller les chefs",
+    "guider les pèlerins"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le petit trou dans le capuchon des stylos Bic sert à _____.",
+   "a": "éviter l'étouffement si on l'avale",
+   "alt": [
+    "éviter l'étouffement",
+    "respirer si on l'avale",
+    "ne pas s'étouffer",
+    "laisser passer l'air"
+   ],
+   "fake": [
+    "empêcher l'encre de sécher",
+    "l'accrocher à un porte-clés",
+    "reconnaître la couleur"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le Monopoly vient d'un jeu inventé pour dénoncer _____.",
+   "a": "les propriétaires",
+   "alt": [
+    "les propriétaires terriens",
+    "le capitalisme",
+    "les loyers",
+    "la spéculation"
+   ],
+   "fake": [
+    "les banques suisses",
+    "la royauté",
+    "les jeux d'argent"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "La machine à barbe à papa a été co-inventée par un _____.",
+   "a": "dentiste",
+   "alt": [],
+   "fake": [
+    "boulanger",
+    "clown",
+    "chimiste"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le four à micro-ondes a été inventé après qu'une barre de _____ a fondu dans la poche d'un ingénieur.",
+   "a": "chocolat",
+   "alt": [],
+   "fake": [
+    "beurre",
+    "cire",
+    "caramel"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le papier bulle a d'abord été inventé pour servir de _____.",
+   "a": "papier peint",
+   "alt": [
+    "tapisserie"
+   ],
+   "fake": [
+    "emballage à fromage",
+    "isolant de fusée",
+    "jouet anti-stress"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "La pâte à modeler Play-Doh servait à l'origine à nettoyer _____.",
+   "a": "le papier peint",
+   "alt": [
+    "papier peint",
+    "les murs",
+    "la tapisserie"
+   ],
+   "fake": [
+    "les vitres",
+    "les dents",
+    "les chaussures"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "La tronçonneuse a été inventée à l'origine pour aider _____.",
+   "a": "aux accouchements",
+   "alt": [
+    "les accouchements",
+    "accoucher",
+    "les chirurgiens",
+    "la chirurgie",
+    "accouchement"
+   ],
+   "fake": [
+    "les bûcherons",
+    "les bouchers",
+    "les sculpteurs de glace"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le premier objet vendu sur eBay était _____.",
+   "a": "un pointeur laser cassé",
+   "alt": [
+    "un laser cassé",
+    "pointeur laser",
+    "un pointeur laser"
+   ],
+   "fake": [
+    "une Barbie",
+    "un ticket de métro",
+    "une chaussette"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "La toute première webcam filmait _____.",
+   "a": "une cafetière",
+   "alt": [
+    "la machine à café",
+    "une machine à café",
+    "cafetière",
+    "la cafetière"
+   ],
+   "fake": [
+    "un aquarium",
+    "un parking",
+    "une porte d'entrée"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le premier SMS de l'histoire, envoyé en 1992, disait _____.",
+   "a": "Joyeux Noël",
+   "alt": [
+    "Merry Christmas"
+   ],
+   "fake": [
+    "Bonjour",
+    "Ça marche ?",
+    "Allô ?"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le nom « Google » vient de « googol », qui désigne _____.",
+   "a": "un 1 suivi de 100 zéros",
+   "alt": [
+    "10 puissance 100",
+    "un très grand nombre",
+    "1 suivi de 100 zéros",
+    "un nombre"
+   ],
+   "fake": [
+    "un oiseau australien",
+    "une planète imaginaire",
+    "un bruit de bébé"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le tout premier logo d'Apple représentait _____.",
+   "a": "Isaac Newton sous un arbre",
+   "alt": [
+    "Newton",
+    "Isaac Newton",
+    "Newton sous un pommier"
+   ],
+   "fake": [
+    "Adam et Ève",
+    "un ver dans une pomme",
+    "Blanche-Neige"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "À sa création, le Coca-Cola était vendu comme _____.",
+   "a": "médicament",
+   "alt": [
+    "un médicament",
+    "un remède",
+    "un tonique",
+    "remède"
+   ],
+   "fake": [
+    "engrais",
+    "parfum",
+    "colorant"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le Viagra a d'abord été testé comme médicament contre _____.",
+   "a": "les maladies du cœur",
+   "alt": [
+    "l'angine de poitrine",
+    "le cœur",
+    "l'hypertension",
+    "les problèmes cardiaques"
+   ],
+   "fake": [
+    "la calvitie",
+    "le rhume des foins",
+    "l'insomnie"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le Fanta a été inventé pendant la Seconde Guerre mondiale en _____.",
+   "a": "Allemagne",
+   "alt": [],
+   "fake": [
+    "Suisse",
+    "Espagne",
+    "Japon"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le Kinder Surprise est interdit à la vente aux États-Unis à cause de _____.",
+   "a": "le jouet à l'intérieur",
+   "alt": [
+    "du jouet",
+    "jouet",
+    "la surprise",
+    "le jouet"
+   ],
+   "fake": [
+    "le sucre",
+    "l'huile de palme",
+    "son emballage brillant"
+   ]
+  },
+  {
+   "cat": "marques",
+   "q": "Le Nutella est né en Italie à cause d'une pénurie de _____.",
+   "a": "cacao",
+   "alt": [
+    "chocolat"
+   ],
+   "fake": [
+    "sucre",
+    "lait",
+    "beurre"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Sur Vénus, une journée dure plus longtemps qu'_____.",
+   "a": "une année",
+   "alt": [
+    "un an",
+    "une année vénusienne"
+   ],
+   "fake": [
+    "une semaine terrestre",
+    "un mois",
+    "un siècle"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Sur Mars, les couchers de soleil sont _____.",
+   "a": "bleus",
+   "alt": [
+    "bleu"
+   ],
+   "fake": [
+    "verts",
+    "violets",
+    "noirs"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Selon les astronautes, l'odeur de l'espace rappelle _____.",
+   "a": "le steak grillé",
+   "alt": [
+    "la viande grillée",
+    "le métal brûlé",
+    "le métal chaud",
+    "le brûlé"
+   ],
+   "fake": [
+    "la menthe",
+    "le chlore",
+    "le linge propre"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "La Lune s'éloigne de la Terre d'environ _____ par an.",
+   "a": "4 cm",
+   "alt": [
+    "3,8 cm",
+    "3 cm",
+    "quatre centimètres",
+    "4 centimètres"
+   ],
+   "fake": [
+    "1 mètre",
+    "1 mm",
+    "15 cm"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Dans l'espace, les astronautes grandissent d'environ _____.",
+   "a": "5 cm",
+   "alt": [
+    "3 cm",
+    "4 cm",
+    "quelques centimètres",
+    "cinq centimètres"
+   ],
+   "fake": [
+    "1 mm",
+    "20 cm",
+    "rien du tout"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Un pot de miel bien fermé peut se conserver _____.",
+   "a": "des milliers d'années",
+   "alt": [
+    "indéfiniment",
+    "pour toujours",
+    "éternellement",
+    "toujours"
+   ],
+   "fake": [
+    "6 mois",
+    "2 ans",
+    "un siècle"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Les bananes sont légèrement _____.",
+   "a": "radioactives",
+   "alt": [
+    "radioactive"
+   ],
+   "fake": [
+    "magnétiques",
+    "toxiques",
+    "salées"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Le corps humain contient assez de fer pour fabriquer _____.",
+   "a": "un petit clou",
+   "alt": [
+    "un clou",
+    "clou"
+   ],
+   "fake": [
+    "une cuillère",
+    "une fourchette",
+    "une clé"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Il est impossible de respirer et d'_____ en même temps.",
+   "a": "avaler",
+   "alt": [
+    "déglutir"
+   ],
+   "fake": [
+    "cligner des yeux",
+    "sourire",
+    "froncer les sourcils"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Le plus petit os du corps humain se trouve dans _____.",
+   "a": "l'oreille",
+   "alt": [
+    "oreille",
+    "l'oreille interne",
+    "l'oreille moyenne"
+   ],
+   "fake": [
+    "le petit orteil",
+    "le nez",
+    "l'auriculaire"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "À la naissance, les bébés n'ont pas encore de _____.",
+   "a": "rotules",
+   "alt": [
+    "rotule",
+    "rotules osseuses"
+   ],
+   "fake": [
+    "papilles gustatives",
+    "empreintes digitales",
+    "cils"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Un éclair est environ _____ fois plus chaud que la surface du Soleil.",
+   "a": "5",
+   "alt": [
+    "cinq",
+    "4",
+    "6",
+    "quatre",
+    "six"
+   ],
+   "fake": [
+    "2",
+    "100",
+    "1 000"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Une pomme flotte sur l'eau car elle contient environ _____ d'air.",
+   "a": "25 %",
+   "alt": [
+    "25%",
+    "un quart",
+    "25"
+   ],
+   "fake": [
+    "5 %",
+    "60 %",
+    "90 %"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Quand l'eau chaude gèle plus vite que l'eau froide, on parle de l'effet _____.",
+   "a": "Mpemba",
+   "alt": [],
+   "fake": [
+    "Doppler",
+    "Coriolis",
+    "Larsen"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Les cacahuètes ne sont pas des noix mais des _____.",
+   "a": "légumineuses",
+   "alt": [
+    "légumes secs",
+    "légumes",
+    "haricots",
+    "pois",
+    "légumineuse"
+   ],
+   "fake": [
+    "graines de fleur",
+    "racines",
+    "champignons"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Un être humain passe environ _____ de sa vie à dormir.",
+   "a": "un tiers",
+   "alt": [
+    "1/3",
+    "25 ans",
+    "26 ans",
+    "33 %",
+    "le tiers"
+   ],
+   "fake": [
+    "un dixième",
+    "la moitié",
+    "deux tiers"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Le cœur d'une baleine bleue est à peu près aussi gros qu'_____.",
+   "a": "une petite voiture",
+   "alt": [
+    "une voiture",
+    "une auto-tamponneuse",
+    "une voiturette"
+   ],
+   "fake": [
+    "un ballon de foot",
+    "une maison",
+    "un bus"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Il est impossible de se _____ soi-même.",
+   "a": "chatouiller",
+   "alt": [
+    "faire des chatouilles",
+    "chatouille"
+   ],
+   "fake": [
+    "pincer",
+    "faire peur",
+    "guérir du hoquet"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "En 1971, l'astronaute Alan Shepard a joué au _____ sur la Lune.",
+   "a": "golf",
+   "alt": [],
+   "fake": [
+    "frisbee",
+    "foot",
+    "ping-pong"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "Le mont Everest grandit d'environ _____ par an.",
+   "a": "4 mm",
+   "alt": [
+    "quelques millimètres",
+    "2 mm",
+    "3 mm",
+    "5 mm",
+    "4 millimètres"
+   ],
+   "fake": [
+    "1 mètre",
+    "10 cm",
+    "2 mètres"
+   ]
+  },
+  {
+   "cat": "sciences",
+   "q": "En été, la tour Eiffel grandit d'environ _____ à cause de la chaleur.",
+   "a": "15 cm",
+   "alt": [
+    "10 cm",
+    "12 cm",
+    "18 cm",
+    "20 cm",
+    "quelques centimètres",
+    "15 centimètres"
+   ],
+   "fake": [
+    "2 mètres",
+    "1 mm",
+    "1 mètre"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « muscle » vient du latin « musculus », qui veut dire _____.",
+   "a": "petite souris",
+   "alt": [
+    "souris"
+   ],
+   "fake": [
+    "petit serpent",
+    "force",
+    "petit pain"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « robot » vient d'un mot tchèque qui signifie _____.",
+   "a": "travail forcé",
+   "alt": [
+    "corvée",
+    "travail",
+    "esclave",
+    "travailleur"
+   ],
+   "fake": [
+    "homme de fer",
+    "machine",
+    "marionnette"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « cravate » vient du mot _____.",
+   "a": "croate",
+   "alt": [
+    "croates",
+    "les Croates",
+    "cavaliers croates",
+    "Croatie"
+   ],
+   "fake": [
+    "corbeau",
+    "crabe",
+    "cravache"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « jean » vient du nom de la ville de _____.",
+   "a": "Gênes",
+   "alt": [
+    "Genes",
+    "Genova"
+   ],
+   "fake": [
+    "Genève",
+    "Iéna",
+    "Jérusalem"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le tissu « denim » tient son nom de la ville de _____.",
+   "a": "Nîmes",
+   "alt": [
+    "Nimes"
+   ],
+   "fake": [
+    "Denain",
+    "Dinan",
+    "Dijon"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le symbole # s'appelle officiellement en français un _____.",
+   "a": "croisillon",
+   "alt": [],
+   "fake": [
+    "dièse",
+    "grillon",
+    "carrelet"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "En japonais, « karaoké » signifie _____.",
+   "a": "orchestre vide",
+   "alt": [
+    "orchestre sans musiciens"
+   ],
+   "fake": [
+    "chanter faux",
+    "micro magique",
+    "voix joyeuse"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "En japonais, « tsunami » signifie _____.",
+   "a": "vague du port",
+   "alt": [
+    "vague de port",
+    "vague portuaire"
+   ],
+   "fake": [
+    "mur d'eau",
+    "colère de la mer",
+    "grande marée"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « avocat » (le fruit) vient d'un mot aztèque qui signifie _____.",
+   "a": "testicule",
+   "alt": [
+    "testicules"
+   ],
+   "fake": [
+    "beurre vert",
+    "pierre tendre",
+    "cœur d'arbre"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « vaccin » vient du latin « vacca », qui veut dire _____.",
+   "a": "vache",
+   "alt": [],
+   "fake": [
+    "piqûre",
+    "vide",
+    "guérison"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « salaire » vient du mot latin qui désigne _____.",
+   "a": "le sel",
+   "alt": [
+    "sel"
+   ],
+   "fake": [
+    "la sueur",
+    "l'argent",
+    "le soldat"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « pamplemousse » vient du _____.",
+   "a": "néerlandais",
+   "alt": [
+    "hollandais"
+   ],
+   "fake": [
+    "créole",
+    "arabe",
+    "portugais"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « ketchup » viendrait d'une sauce asiatique à base de _____.",
+   "a": "poisson fermenté",
+   "alt": [
+    "poisson",
+    "saumure de poisson"
+   ],
+   "fake": [
+    "piment",
+    "noix de coco",
+    "mangue"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "En japonais, « sudoku » signifie _____.",
+   "a": "chiffre unique",
+   "alt": [
+    "chiffre seul",
+    "un seul chiffre",
+    "chiffres uniques"
+   ],
+   "fake": [
+    "neuf cases",
+    "grille magique",
+    "casse-tête"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le maillot « bikini » tient son nom _____.",
+   "a": "d'un atoll",
+   "alt": [
+    "d'une île",
+    "atoll de Bikini",
+    "une île",
+    "un atoll"
+   ],
+   "fake": [
+    "d'une danseuse",
+    "d'un poisson",
+    "d'une créatrice de mode"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « canapé » vient d'un mot grec qui désignait _____.",
+   "a": "une moustiquaire",
+   "alt": [
+    "moustiquaire",
+    "un lit avec moustiquaire"
+   ],
+   "fake": [
+    "un banc",
+    "un tapis",
+    "un lit de roi"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « alcool » vient de l'arabe « al-kuhl », qui désignait _____.",
+   "a": "du khôl",
+   "alt": [
+    "le khôl",
+    "khôl",
+    "une poudre noire",
+    "un maquillage",
+    "du fard",
+    "fard à paupières"
+   ],
+   "fake": [
+    "une boisson sacrée",
+    "du jus de datte",
+    "un parfum"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « dollar » vient de « thaler », une pièce frappée en _____.",
+   "a": "Bohême",
+   "alt": [
+    "Allemagne",
+    "République tchèque",
+    "Tchéquie"
+   ],
+   "fake": [
+    "Espagne",
+    "Hollande",
+    "Écosse"
+   ]
+  },
+  {
+   "cat": "mots",
+   "q": "Le mot « hasard » vient de l'arabe « az-zahr », qui veut dire _____.",
+   "a": "dé",
+   "alt": [
+    "le dé",
+    "dés",
+    "les dés",
+    "jeu de dés",
+    "fleur"
+   ],
+   "fake": [
+    "chance",
+    "étoile",
+    "destin"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "En Suisse, il est interdit d'avoir un seul _____, car il se sentirait seul.",
+   "a": "cochon d'Inde",
+   "alt": [
+    "cochons d'Inde",
+    "cobaye"
+   ],
+   "fake": [
+    "chat",
+    "hamster",
+    "chien"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "À Singapour, la vente de _____ est interdite.",
+   "a": "chewing-gum",
+   "alt": [
+    "chewing-gums",
+    "chewing gum",
+    "gomme à mâcher",
+    "chewing"
+   ],
+   "fake": [
+    "chips",
+    "pop-corn",
+    "sucettes"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "L'animal national de l'Écosse est _____.",
+   "a": "la licorne",
+   "alt": [
+    "licorne"
+   ],
+   "fake": [
+    "le cerf",
+    "l'aigle",
+    "le blaireau"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "Il n'y a pratiquement pas de _____ en Islande.",
+   "a": "moustiques",
+   "alt": [
+    "moustique"
+   ],
+   "fake": [
+    "chats",
+    "vaches",
+    "églises"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "En Finlande, on organise un championnat du monde de _____.",
+   "a": "course en portant sa femme",
+   "alt": [
+    "porter sa femme",
+    "porté d'épouse",
+    "portage d'épouse",
+    "porter son épouse"
+   ],
+   "fake": [
+    "sieste en public",
+    "lancer de saucisse",
+    "marche arrière"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "En Angleterre, chaque année, des gens dévalent une colline pour attraper _____.",
+   "a": "un fromage",
+   "alt": [
+    "une meule de fromage",
+    "fromage"
+   ],
+   "fake": [
+    "un cochon",
+    "une oie",
+    "un tonneau de bière"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "Au Danemark, si tu es encore célibataire à 25 ans, tes amis te recouvrent de _____.",
+   "a": "cannelle",
+   "alt": [
+    "de la cannelle"
+   ],
+   "fake": [
+    "riz",
+    "farine",
+    "plumes"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "Le nom de commune le plus court de France est _____.",
+   "a": "Y",
+   "alt": [],
+   "fake": [
+    "U",
+    "A",
+    "Ô"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "En Suède, un hôtel est reconstruit chaque hiver entièrement en _____.",
+   "a": "glace",
+   "alt": [
+    "neige",
+    "glace et neige"
+   ],
+   "fake": [
+    "bois flotté",
+    "carton",
+    "paille"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "Depuis 2022, la baguette de pain est inscrite au _____.",
+   "a": "patrimoine de l'UNESCO",
+   "alt": [
+    "patrimoine mondial",
+    "patrimoine culturel immatériel",
+    "UNESCO",
+    "patrimoine immatériel"
+   ],
+   "fake": [
+    "Livre Guinness des records",
+    "musée du Louvre",
+    "catalogue de la NASA"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "À Paris, la station de métro Arts-et-Métiers est décorée comme _____.",
+   "a": "un sous-marin",
+   "alt": [
+    "le Nautilus",
+    "sous-marin"
+   ],
+   "fake": [
+    "une grotte",
+    "un vaisseau spatial",
+    "une bibliothèque"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "Au Japon, dormir au travail est bien vu : ça s'appelle l'_____.",
+   "a": "inemuri",
+   "alt": [],
+   "fake": [
+    "oyasumi",
+    "nemukai",
+    "sushiro"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "En Corée du Sud, une croyance dit qu'on peut mourir si l'on dort avec _____.",
+   "a": "un ventilateur allumé",
+   "alt": [
+    "le ventilateur",
+    "un ventilateur"
+   ],
+   "fake": [
+    "les cheveux mouillés",
+    "la fenêtre ouverte",
+    "des chaussettes"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "En Thaïlande, il est très impoli de toucher _____ de quelqu'un.",
+   "a": "la tête",
+   "alt": [
+    "tête"
+   ],
+   "fake": [
+    "l'épaule",
+    "l'oreille",
+    "le coude"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "En Espagne, au Nouvel An, on mange _____ aux douze coups de minuit.",
+   "a": "12 grains de raisin",
+   "alt": [
+    "des raisins",
+    "douze raisins",
+    "du raisin",
+    "12 raisins",
+    "douze grains de raisin"
+   ],
+   "fake": [
+    "12 olives",
+    "12 crevettes",
+    "12 bonbons"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "Aux Pays-Bas, il y a plus de _____ que d'habitants.",
+   "a": "vélos",
+   "alt": [
+    "vélo",
+    "bicyclettes"
+   ],
+   "fake": [
+    "vaches",
+    "moulins",
+    "bateaux"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "Au Bhoutan, le gouvernement mesure le _____ national brut.",
+   "a": "bonheur",
+   "alt": [],
+   "fake": [
+    "sourire",
+    "silence",
+    "sommeil"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "À Saint-Étienne, au XIXe siècle, _____ a publié l'un des premiers catalogues de vente par correspondance de France.",
+   "a": "Manufrance",
+   "alt": [
+    "la Manufacture française d'armes et cycles",
+    "Manufacture française d'armes et cycles"
+   ],
+   "fake": [
+    "Casino",
+    "La Redoute",
+    "Les Trois Suisses"
+   ]
+  },
+  {
+   "cat": "monde",
+   "q": "La chaîne de supermarchés Casino a été fondée à _____.",
+   "a": "Saint-Étienne",
+   "alt": [
+    "Saint Etienne",
+    "Sainté"
+   ],
+   "fake": [
+    "Monaco",
+    "Lyon",
+    "Marseille"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Le marathon fait 42,195 km parce qu'en 1908, _____.",
+   "a": "la famille royale anglaise voulait voir le départ",
+   "alt": [
+    "pour la famille royale",
+    "la famille royale",
+    "la reine voulait voir l'arrivée",
+    "le départ du château de Windsor",
+    "la reine"
+   ],
+   "fake": [
+    "un coureur s'était perdu",
+    "c'était la distance d'un pari",
+    "la piste était trop courte"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "De 1912 à 1948, les Jeux olympiques ont décerné des médailles en _____.",
+   "a": "peinture",
+   "alt": [
+    "art",
+    "arts",
+    "architecture",
+    "littérature",
+    "musique",
+    "sculpture"
+   ],
+   "fake": [
+    "cuisine",
+    "échecs",
+    "poker"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Le tir à la corde a été une discipline olympique jusqu'en _____.",
+   "a": "1920",
+   "alt": [],
+   "fake": [
+    "1896",
+    "1956",
+    "1984"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Aux Jeux de Paris en 1900, une épreuve de tir se faisait sur des _____ vivants.",
+   "a": "pigeons",
+   "alt": [
+    "pigeon"
+   ],
+   "fake": [
+    "lapins",
+    "canards",
+    "poulets"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Sur le Tour de France 1904, des coureurs ont été disqualifiés pour avoir pris _____.",
+   "a": "le train",
+   "alt": [
+    "train"
+   ],
+   "fake": [
+    "un cheval",
+    "un bateau",
+    "un tandem"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "En finale de la première Coupe du monde, en 1930, chaque mi-temps s'est jouée avec _____.",
+   "a": "le ballon d'une équipe différente",
+   "alt": [
+    "un ballon différent",
+    "le ballon de chaque équipe",
+    "deux ballons différents",
+    "le ballon de chaque pays"
+   ],
+   "fake": [
+    "un arbitre différent",
+    "des gardiens échangés",
+    "un ballon carré"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Le plus long match de tennis de l'histoire, à Wimbledon en 2010, a duré _____.",
+   "a": "11 heures",
+   "alt": [
+    "11 h",
+    "11h05",
+    "onze heures",
+    "trois jours",
+    "3 jours"
+   ],
+   "fake": [
+    "6 heures",
+    "19 heures",
+    "2 heures"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Les tout premiers paniers de basket étaient des _____.",
+   "a": "paniers à pêches",
+   "alt": [
+    "paniers de pêches",
+    "caisses à pêches",
+    "paniers à fruits",
+    "cageots",
+    "paniers"
+   ],
+   "fake": [
+    "seaux d'eau",
+    "poubelles",
+    "nids d'oiseaux"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "À sa création, le volley-ball s'appelait la _____.",
+   "a": "mintonette",
+   "alt": [],
+   "fake": [
+    "balle volante",
+    "handball aérien",
+    "volante"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Le badminton tient son nom _____.",
+   "a": "d'un château anglais",
+   "alt": [
+    "d'un domaine anglais",
+    "Badminton House",
+    "d'un manoir",
+    "d'une maison anglaise"
+   ],
+   "fake": [
+    "d'un oiseau indien",
+    "d'un colonel",
+    "d'un village chinois"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Le vainqueur du premier marathon olympique moderne, en 1896, était un _____ grec.",
+   "a": "porteur d'eau",
+   "alt": [
+    "vendeur d'eau"
+   ],
+   "fake": [
+    "berger",
+    "facteur",
+    "pêcheur"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "L'AS Saint-Étienne a été fondée en 1919 par les employés de _____.",
+   "a": "Casino",
+   "alt": [
+    "la société Casino",
+    "Geoffroy Guichard",
+    "magasins Casino"
+   ],
+   "fake": [
+    "Manufrance",
+    "Michelin",
+    "Peugeot"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Au sumo, avant le combat, les lutteurs lancent _____ sur le ring.",
+   "a": "du sel",
+   "alt": [
+    "sel"
+   ],
+   "fake": [
+    "du riz",
+    "du sable",
+    "des pétales"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Le premier Tour de France, en 1903, a été organisé pour vendre plus de _____.",
+   "a": "journaux",
+   "alt": [
+    "exemplaires de L'Auto",
+    "le journal L'Auto",
+    "journal"
+   ],
+   "fake": [
+    "vélos",
+    "pneus",
+    "cartes postales"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Au Moyen Âge, les ballons de foot étaient fabriqués avec _____.",
+   "a": "une vessie de porc",
+   "alt": [
+    "vessie de cochon",
+    "vessie",
+    "une vessie"
+   ],
+   "fake": [
+    "une noix de coco",
+    "du crin de cheval",
+    "un chou"
+   ]
+  },
+  {
+   "cat": "sport",
+   "q": "Au cricket, un match « test » peut durer jusqu'à _____.",
+   "a": "5 jours",
+   "alt": [
+    "cinq jours"
+   ],
+   "fake": [
+    "12 heures",
+    "2 semaines",
+    "1 mois"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Le fromage le plus cher du monde, le pule, est fait avec du lait d'_____.",
+   "a": "ânesse",
+   "alt": [
+    "âne",
+    "anesse"
+   ],
+   "fake": [
+    "renne",
+    "chamelle",
+    "bison"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Le café kopi luwak est fait avec des grains passés par _____.",
+   "a": "le ventre d'une civette",
+   "alt": [
+    "une civette",
+    "les excréments d'une civette",
+    "les crottes de civette",
+    "le système digestif d'une civette",
+    "civette"
+   ],
+   "fake": [
+    "une machine à vapeur",
+    "le bec d'un toucan",
+    "un volcan"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Le chocolat blanc ne contient pas de _____.",
+   "a": "pâte de cacao",
+   "alt": [
+    "cacao en poudre",
+    "cacao solide",
+    "masse de cacao"
+   ],
+   "fake": [
+    "lait",
+    "sucre",
+    "beurre de cacao"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Les M&M's ont été inventés pour _____.",
+   "a": "les soldats",
+   "alt": [
+    "l'armée",
+    "les militaires",
+    "que le chocolat ne fonde pas"
+   ],
+   "fake": [
+    "les astronautes",
+    "les enfants malades",
+    "les cinémas"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Les Corn Flakes ont été inventés par un médecin qui voulait _____.",
+   "a": "un petit-déjeuner fade",
+   "alt": [
+    "calmer les pulsions",
+    "un repas sain",
+    "calmer les ardeurs",
+    "réduire les pulsions"
+   ],
+   "fake": [
+    "faire grossir ses patients",
+    "soigner le rhume",
+    "nourrir les chevaux"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Au début, le Coca-Cola contenait de l'extrait de _____.",
+   "a": "feuille de coca",
+   "alt": [
+    "coca",
+    "cocaïne",
+    "feuilles de coca"
+   ],
+   "fake": [
+    "tabac",
+    "café vert",
+    "menthe poivrée"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "La noix de cajou pousse au bout _____.",
+   "a": "d'une pomme de cajou",
+   "alt": [
+    "d'un fruit",
+    "d'une pomme",
+    "du fruit de l'anacardier"
+   ],
+   "fake": [
+    "d'une racine",
+    "d'une fleur de palmier",
+    "d'une liane"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Après le safran, l'épice la plus chère du monde est _____.",
+   "a": "la vanille",
+   "alt": [
+    "vanille"
+   ],
+   "fake": [
+    "la cannelle",
+    "le poivre noir",
+    "la cardamome"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "La pastèque est composée d'environ _____ d'eau.",
+   "a": "92 %",
+   "alt": [
+    "90 %",
+    "92%",
+    "90%",
+    "92",
+    "90"
+   ],
+   "fake": [
+    "50 %",
+    "70 %",
+    "99 %"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "La force d'un piment se mesure sur l'échelle de _____.",
+   "a": "Scoville",
+   "alt": [],
+   "fake": [
+    "Richter",
+    "Beaufort",
+    "Mohs"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Le croissant est d'origine _____.",
+   "a": "autrichienne",
+   "alt": [
+    "Autriche",
+    "viennoise",
+    "de Vienne"
+   ],
+   "fake": [
+    "turque",
+    "belge",
+    "polonaise"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "La pomme de terre a été popularisée en France par _____.",
+   "a": "Parmentier",
+   "alt": [
+    "Antoine Parmentier",
+    "Antoine-Augustin Parmentier"
+   ],
+   "fake": [
+    "Louis XIV",
+    "Napoléon",
+    "Vatel"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "La raclette tient son nom du verbe _____.",
+   "a": "racler",
+   "alt": [],
+   "fake": [
+    "râper",
+    "rôtir",
+    "réchauffer"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Le hamburger tire son nom de la ville de _____.",
+   "a": "Hambourg",
+   "alt": [
+    "Hamburg"
+   ],
+   "fake": [
+    "Bergen",
+    "Brandebourg",
+    "Boston"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Le sandwich porte le nom d'un comte anglais qui voulait manger sans quitter _____.",
+   "a": "sa table de jeu",
+   "alt": [
+    "les cartes",
+    "son jeu de cartes",
+    "la table de jeu",
+    "sa partie de cartes",
+    "son bureau"
+   ],
+   "fake": [
+    "son cheval",
+    "son bain",
+    "son lit"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "L'inventeur de la boîte des chips Pringles a été enterré _____.",
+   "a": "dans une boîte de Pringles",
+   "alt": [
+    "dans une boîte Pringles",
+    "dans une boîte de chips",
+    "dans une boîte"
+   ],
+   "fake": [
+    "avec une chips dans la main",
+    "sous un champ de patates",
+    "au pied d'une friteuse"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Les nouilles instantanées ont été inventées au Japon par _____.",
+   "a": "le fondateur de Nissin",
+   "alt": [
+    "Momofuku Ando",
+    "Nissin",
+    "Ando"
+   ],
+   "fake": [
+    "un lutteur de sumo",
+    "un moine",
+    "un astronaute"
+   ]
+  },
+  {
+   "cat": "bouffe",
+   "q": "Le roquefort est affiné dans _____.",
+   "a": "des grottes",
+   "alt": [
+    "une grotte",
+    "des caves",
+    "une cave",
+    "grottes"
+   ],
+   "fake": [
+    "des tonneaux",
+    "des glacières",
+    "des tours"
+   ]
+  }
+ ]
+}

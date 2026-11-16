@@ -1,12 +1,11 @@
 {
   "_info": "Modifie ce fichier pour annoncer une nouvelle version : numéro, nom, date (AAAA-MM-JJ) et liste des nouveautés. C'est pris en compte immédiatement, sans redémarrer le serveur.",
-  "version": "0.4.0",
-  "name": "Loup-Garou, Tic Tac Boum & Du coq à l’âne (bêta)",
+  "version": "0.5.0",
+  "name": "Bluff (bêta)",
   "date": "2026-10-29",
   "notes": [
-    "Nouveau jeu « Loup-Garou » (bêta) : table ronde, rôles classiques (voyante, sorcière, chasseur, Cupidon, petite fille, salvateur, ancien, idiot)",
-    "Composition choisie par l’hôte avec une recommandation selon le nombre de joueurs, élection du maire, chat secret des loups et cimetière",
-    "Nouveau jeu « Tic Tac Boum » : trouve un mot avec la syllabe avant que la bombe n’explose (mèche secrète, vies, dictionnaire de 336 000 mots)",
-    "Nouveau jeu « Du coq à l’âne » : le téléphone arabe en dessin (on dessine, le voisin devine, le suivant redessine…), révélation des carnets page par page"
+    "Nouveau jeu « Bluff » (bêta) : une anecdote vraie avec un trou, chacun invente une fausse réponse crédible, puis on cherche la vraie au milieu des mensonges",
+    "166 anecdotes vraies dans 8 thèmes (animaux, histoire, inventions, sciences, mots, monde, sport, bouffe), au choix de l’hôte",
+    "+2 pts si tu trouves la vérité, +1 pt par joueur piégé, points doublés à la dernière question (option), bouton « Mentir pour moi » et mensonge de la soirée"
   ]
 }

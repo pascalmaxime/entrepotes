@@ -35,6 +35,10 @@ services:
     container_name: entrepotes-tunnel
     restart: unless-stopped
     command: tunnel --no-autoupdate --url http://entrepotes:3000
+    # DNS publics : le tunnel trouve Cloudflare même si le DNS du NUC (Tailscale) flanche
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     depends_on:
       entrepotes:
         condition: service_healthy
