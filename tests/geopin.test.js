@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import { LobbyManager } from '../src/game/LobbyManager.js';
 import { createQuestionBank } from '../src/game/questionBank.js';
 import { GameError } from '../src/game/errors.js';
-import { createGeoBank, distanceKm, getBank, pointsFor } from '../src/geopin/engine.js';
+import { createGeoBank, distanceKm, distanceTo, getBank, pointsFor } from '../src/geopin/engine.js';
 
 const expectError = (fn, code) => assert.throws(fn, (err) => err instanceof GameError && err.code === code);
-const PARIS = { key: 'capitales:Paris', cat: 'capitales', name: 'Paris', hint: 'France', lat: 48.86, lon: 2.35, view: 'monde' };
+const PARIS = { key: 'monde:Paris', cat: 'monde', name: 'Paris', hint: 'France', lat: 48.86, lon: 2.35, view: 'monde' };
 const SAINTE = { key: 'france:Saint-Étienne', cat: 'france', name: 'Saint-Étienne', hint: 'Loire', lat: 45.44, lon: 4.39, view: 'france' };
 
 function setup(n = 3, settings = {}) {
@@ -16,7 +16,7 @@ function setup(n = 3, settings = {}) {
   lobby.geoBank = createGeoBank([PARIS, SAINTE]);
   const players = ['Ana', 'Bob', 'Cléo'].slice(0, n).map((name, i) => lobby.addPlayer(name, `s${i}`));
   lobby.setMode(players[0].id, 'geo-pin');
-  lobby.setSettings(players[0].id, { rounds: 2, gpTimer: 20, ...settings });
+  lobby.setSettings(players[0].id, { rounds: 2, gpTimer: 20, gpCategories: ['monde', 'france'], ...settings });
   lobby.startGame(players[0].id);
   lobby.game.geoPin.questions = [PARIS, SAINTE]; // ordre fixe pour les tests
   return { lobby, players };
@@ -34,7 +34,7 @@ test('Géo Pin : la banque fournie est valide', () => {
   const bank = getBank();
   assert.ok(bank.size >= 200);
   const counts = bank.counts();
-  for (const id of ['capitales', 'villes', 'monuments', 'france']) assert.ok(counts[id] >= 30, id);
+  for (const id of ['monde', 'pays', 'monuments', 'europe', 'asie', 'amerique', 'afrique', 'france']) assert.ok(counts[id] >= 30, id);
   // Les lieux « france » sont bien en France métropolitaine (Corse comprise).
   for (const q of bank.pick({ categories: ['france'], count: 500 })) {
     assert.ok(q.lat > 41 && q.lat < 51.5 && q.lon > -5.5 && q.lon < 10, q.name);
@@ -105,4 +105,22 @@ test('Géo Pin : le chrono révèle tout seul, réglages vérifiés', () => {
     lobby.dispose();
     mock.timers.reset();
   }
+});
+
+test('Géo Pin : mode Pays (dans le pays = 0 km) et régions notées plus serré', () => {
+  const bank = getBank();
+  const pays = bank.pick({ categories: ['pays'], count: 500 });
+  const find = (name) => pays.find((p) => p.name === name);
+  const france = find('France');
+  assert.equal(distanceTo({ lat: 45.44, lon: 4.39 }, france), 0, 'Saint-Étienne est en France');
+  const fromMadrid = distanceTo({ lat: 40.42, lon: -3.7 }, france);
+  assert.ok(fromMadrid > 250 && fromMadrid < 450, `Madrid → frontière française : ${Math.round(fromMadrid)} km`);
+  assert.equal(distanceTo({ lat: -15.8, lon: -47.9 }, find('Brésil')), 0);
+  assert.equal(distanceTo({ lat: 61, lon: 100 }, find('Russie')), 0);
+  assert.ok(Math.abs(france.lat - 46.5) < 3 && Math.abs(france.lon - 2.5) < 4, 'repère au centre de la métropole');
+  assert.ok(pointsFor(500, 'europe') < pointsFor(500, 'asie') && pointsFor(500, 'asie') < pointsFor(500, 'monde'));
+  // Une ville « bonus » de région ne sort pas dans Villes du monde.
+  const monde = bank.pick({ categories: ['monde'], count: 500 }).map((p) => p.name);
+  assert.ok(monde.includes('Tokyo') && !monde.includes('Bamako'));
+  assert.ok(bank.pick({ categories: ['afrique'], count: 500 }).some((p) => p.name === 'Bamako'));
 });

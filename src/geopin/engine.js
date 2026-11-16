@@ -11,12 +11,19 @@ import { GameError } from '../game/errors.js';
  * La vraie position n'est JAMAIS envoyée aux navigateurs avant la révélation.
  */
 
+// group « monde » : sur la carte du monde ; group « region » : sur une carte zoomée, où il faut être plus précis.
 export const GP_CATEGORIES = Object.freeze([
-  { id: 'capitales', label: 'Capitales', emoji: '🏛️', view: 'monde' },
-  { id: 'villes', label: 'Grandes villes', emoji: '🌆', view: 'monde' },
-  { id: 'monuments', label: 'Monuments', emoji: '🗿', view: 'monde' },
-  { id: 'france', label: 'France', emoji: '🇫🇷', view: 'france' },
+  { id: 'monde', label: 'Villes', emoji: '🌍', view: 'monde', group: 'monde' },
+  { id: 'pays', label: 'Pays', emoji: '🗺️', view: 'monde', group: 'monde' },
+  { id: 'monuments', label: 'Monuments', emoji: '🗿', view: 'monde', group: 'monde' },
+  { id: 'europe', label: 'Europe', emoji: '🏰', view: 'europe', group: 'region' },
+  { id: 'asie', label: 'Asie', emoji: '🏯', view: 'asie', group: 'region' },
+  { id: 'amerique', label: 'Amérique', emoji: '🗽', view: 'amerique', group: 'region' },
+  { id: 'afrique', label: 'Afrique', emoji: '🦁', view: 'afrique', group: 'region' },
+  { id: 'france', label: 'France', emoji: '🇫🇷', view: 'france', group: 'region' },
 ]);
+const REGION_IDS = ['europe', 'asie', 'amerique', 'afrique'];
+const DEFAULT_CATEGORIES = ['monde', 'pays', 'monuments', 'france'];
 export const GP_CATEGORY_IDS = GP_CATEGORIES.map((c) => c.id);
 const VIEW_OF = Object.fromEntries(GP_CATEGORIES.map((c) => [c.id, c.view]));
 export const MIN_PLAYERS = 2;
@@ -26,9 +33,11 @@ export const GP_LIMITS = Object.freeze({
 });
 export const MAX_POINTS = 1000;
 // Distance (km) à laquelle on ne garde plus que ~37 % des points : large sur le monde, serrée sur la France.
-const SCALE_KM = { monde: 2000, france: 150 };
+const SCALE_KM = { monde: 2000, amerique: 1200, asie: 1000, afrique: 900, europe: 500, france: 150 };
 const GRACE_MS = 1_000;
 export const GEOPIN_FILE = fileURLToPath(new URL('../../data/geopin.json', import.meta.url));
+const COUNTRIES_FILE = fileURLToPath(new URL('../../data/mculture/carte.json', import.meta.url));
+const WORLD_FILE = fileURLToPath(new URL('../../public/mculture/world-110m.json', import.meta.url));
 
 function shuffle(items) {
   const copy = [...items];
@@ -48,6 +57,62 @@ export function distanceKm(a, b) {
   return 6371 * 2 * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
+// --- Mode « Pays » : dans le pays = 0 km, sinon distance jusqu'à sa frontière la plus proche ------------------
+
+function inRing(point, ring) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    if (yi > point.lat !== yj > point.lat && point.lon < ((xj - xi) * (point.lat - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+export function distanceToCountry(guess, rings) {
+  if (rings.some((ring) => inRing(guess, ring))) return 0;
+  let best = Infinity;
+  for (const ring of rings) for (const [lon, lat] of ring) best = Math.min(best, distanceKm(guess, { lat, lon }));
+  return best;
+}
+
+export function distanceTo(guess, place) {
+  return place.rings ? distanceToCountry(guess, place.rings) : distanceKm(guess, place);
+}
+
+// Contours des pays (les mêmes que la carte affichée), pour le mode « Pays ».
+function loadCountries() {
+  try {
+    const topology = JSON.parse(readFileSync(WORLD_FILE, 'utf8'));
+    const names = JSON.parse(readFileSync(COUNTRIES_FILE, 'utf8')).questions;
+    const { scale, translate } = topology.transform;
+    const arcs = topology.arcs.map((arc) => {
+      let x = 0;
+      let y = 0;
+      return arc.map(([dx, dy]) => {
+        x += dx;
+        y += dy;
+        return [x * scale[0] + translate[0], y * scale[1] + translate[1]];
+      });
+    });
+    const ring = (indexes) => indexes.flatMap((index, i) => (index < 0 ? [...arcs[~index]].reverse() : arcs[index]).slice(i ? 1 : 0));
+    const byId = new Map(topology.objects.countries.geometries.filter((g) => g.arcs).map((g) => [g.id, (g.type === 'Polygon' ? [g.arcs] : g.arcs).map((poly) => ring(poly[0]))]));
+    return names
+      // Seulement les pays connus (1 ou 2 points dans M-Culture) : les plus durs restent pour le quiz.
+      .filter((c) => byId.has(c.id) && (c.pts ?? 3) <= 2)
+      .map((c) => {
+        const rings = byId.get(c.id);
+        // Point de repère : le centre du plus grand morceau du pays (la France sans la Guyane).
+        const box = (r) => [Math.min(...r.map((p) => p[0])), Math.min(...r.map((p) => p[1])), Math.max(...r.map((p) => p[0])), Math.max(...r.map((p) => p[1]))];
+        const main = rings.map(box).filter((b) => b[2] - b[0] < 180).sort((a, b) => (b[2] - b[0]) * (b[3] - b[1]) - (a[2] - a[0]) * (a[3] - a[1]))[0] ?? box(rings[0]);
+        return { key: `pays:${c.id}`, cat: 'pays', name: c.a, hint: '', countryId: c.id, lat: (main[1] + main[3]) / 2, lon: (main[0] + main[2]) / 2, view: 'monde', rings };
+      });
+  } catch (error) {
+    console.warn('[geopin] Mode « Pays » indisponible :', error.message);
+    return [];
+  }
+}
+
 export function pointsFor(km, view) {
   return Math.round(MAX_POINTS * Math.exp(-km / SCALE_KM[view]));
 }
@@ -57,11 +122,18 @@ export function pointsFor(km, view) {
 function parseBank(raw) {
   const data = JSON.parse(raw);
   const ok = (n, max) => typeof n === 'number' && Number.isFinite(n) && Math.abs(n) <= max;
-  const list = (Array.isArray(data.questions) ? data.questions : [])
-    .filter((q) => GP_CATEGORY_IDS.includes(q?.cat) && typeof q.name === 'string' && q.name.trim() && ok(q.lat, 90) && ok(q.lon, 180))
-    .map((q) => ({ key: `${q.cat}:${q.name}`, cat: q.cat, name: q.name.trim(), hint: typeof q.hint === 'string' ? q.hint.trim() : '', lat: q.lat, lon: q.lon, view: VIEW_OF[q.cat] }));
+  const list = [];
+  for (const q of Array.isArray(data.questions) ? data.questions : []) {
+    if (typeof q?.name !== 'string' || !q.name.trim() || !ok(q.lat, 90) || !ok(q.lon, 180)) continue;
+    // Une ville sort dans « Villes du monde » (sauf "monde": false) et dans la catégorie de sa région.
+    const cats = q.cat === 'villes' ? [q.monde === false ? null : 'monde', REGION_IDS.includes(q.region) ? q.region : null] : [q.cat];
+    for (const cat of cats) {
+      if (!GP_CATEGORY_IDS.includes(cat)) continue;
+      list.push({ key: `${cat}:${q.name}`, cat, name: q.name.trim(), hint: typeof q.hint === 'string' ? q.hint.trim() : '', lat: q.lat, lon: q.lon, view: VIEW_OF[cat] });
+    }
+  }
   if (list.length === 0) throw new Error('Aucun lieu valide.');
-  return list;
+  return [...list, ...loadCountries()];
 }
 
 export function createGeoBank(places) {
@@ -205,7 +277,7 @@ export function reveal(lobby) {
     .map((playerId) => {
       const guess = gp.guesses.get(playerId);
       if (!guess) return { playerId, lat: null, lon: null, km: null, points: 0 };
-      const km = distanceKm(guess, place);
+      const km = distanceTo(guess, place);
       return { playerId, ...guess, km: Math.round(km), points: pointsFor(km, place.view) };
     })
     .sort((a, b) => (a.km ?? Infinity) - (b.km ?? Infinity));
@@ -220,7 +292,7 @@ export function reveal(lobby) {
   });
   game.result = {
     type: 'geo-pin',
-    place: { cat: place.cat, name: place.name, hint: place.hint, lat: place.lat, lon: place.lon, view: place.view },
+    place: { cat: place.cat, name: place.name, hint: place.hint, lat: place.lat, lon: place.lon, view: place.view, countryId: place.countryId ?? null },
     entries,
     scores: { ...game.totals },
   };
@@ -272,12 +344,12 @@ export function geoPinLimits(lobby) {
     minPlayers: MIN_PLAYERS,
     timers: [...GP_LIMITS.timers],
     maxPoints: MAX_POINTS,
-    categories: GP_CATEGORIES.map(({ id, label, emoji }) => ({ id, label, emoji, count: counts[id] ?? 0 })),
+    categories: GP_CATEGORIES.map(({ id, label, emoji, group }) => ({ id, label, emoji, group, count: counts[id] ?? 0 })),
   };
 }
 
 export function defaultSettings() {
-  return { categories: [...GP_CATEGORY_IDS], ...GP_LIMITS.defaults };
+  return { categories: [...DEFAULT_CATEGORIES], ...GP_LIMITS.defaults };
 }
 
 export function sanitizeSettings(currentSettings, { gpCategories, gpTimer, gpHint }) {

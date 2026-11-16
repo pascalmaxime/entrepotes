@@ -1,11 +1,11 @@
 {
   "_info": "Modifie ce fichier pour annoncer une nouvelle version : numéro, nom, date (AAAA-MM-JJ) et liste des nouveautés. C'est pris en compte immédiatement, sans redémarrer le serveur.",
-  "version": "0.6.0",
-  "name": "Géo Pin (bêta)",
+  "version": "0.5.4",
+  "name": "Géo Pin par régions (bêta)",
   "date": "2026-11-16",
   "notes": [
     "Nouveau jeu « Géo Pin » (bêta) : un lieu s’affiche, pose ton épingle sur la carte, le plus près possible",
-    "214 lieux : capitales, grandes villes, monuments et villes de France (sur une carte zoomée)",
+    "398 lieux : villes connues du monde, pays, monuments, et villes par région sur carte zoomée (Europe, Asie, Amérique, Afrique, France)",
     "Carte à zoomer et déplacer, jusqu’à 1 000 pts par lieu selon la distance, indice au choix de l’hôte, épingle la plus précise à la fin"
   ]
 }

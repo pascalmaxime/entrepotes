@@ -4,9 +4,13 @@ import { loadWorld } from './mculture.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const CAT_INFO = {
-  capitales: { label: 'Capitales', emoji: '🏛️' },
-  villes: { label: 'Grandes villes', emoji: '🌆' },
+  monde: { label: 'Villes', emoji: '🌍' },
+  pays: { label: 'Pays', emoji: '🗺️' },
   monuments: { label: 'Monuments', emoji: '🗿' },
+  europe: { label: 'Europe', emoji: '🏰' },
+  asie: { label: 'Asie', emoji: '🏯' },
+  amerique: { label: 'Amérique', emoji: '🗽' },
+  afrique: { label: 'Afrique', emoji: '🦁' },
   france: { label: 'France', emoji: '🇫🇷' },
 };
 const catInfo = (id) => CAT_INFO[id] ?? { label: id, emoji: '📍' };
@@ -43,12 +47,14 @@ export function renderGeoPinSettings(lobby, host, ctx) {
   return h(
     'div',
     { class: 'quiz-settings' },
-    h('span', { class: 'rounds-label' }, 'Lieux à trouver'),
-    h('div', { class: 'cat-toggles' }, limits.categories.map((cat) => switchBtn(s.categories.includes(cat.id), cat.label, cat.emoji, !host || cat.count === 0, () => toggle(cat.id), `${cat.count} lieux`))),
+    h('span', { class: 'rounds-label' }, 'Sur la carte du monde'),
+    h('div', { class: 'cat-toggles gp-cats' }, limits.categories.filter((cat) => cat.group === 'monde').map((cat) => switchBtn(s.categories.includes(cat.id), cat.label, cat.emoji, !host || cat.count === 0, () => toggle(cat.id), `${cat.count} lieux`))),
+    h('span', { class: 'rounds-label' }, 'Villes par région (carte zoomée)'),
+    h('div', { class: 'cat-toggles gp-cats' }, limits.categories.filter((cat) => cat.group === 'region').map((cat) => switchBtn(s.categories.includes(cat.id), cat.label, cat.emoji, !host || cat.count === 0, () => toggle(cat.id), `${cat.count} villes`))),
     h('span', { class: 'rounds-label' }, 'Temps pour poser son épingle'),
     h('div', { class: 'timer-choices' }, limits.timers.map((v) => h('button', { type: 'button', class: `timer-choice${v === s.timer ? ' is-active' : ''}`, 'aria-pressed': String(v === s.timer), disabled: !host, onClick: () => v !== s.timer && set({ gpTimer: v }) }, `${v} s`))),
     h('div', { class: 'cat-toggles' }, switchBtn(s.hint, 'Afficher un indice (pays, département)', '💡', !host, () => set({ gpHint: !s.hint }))),
-    h('p', { class: 'hint hint-left' }, `Un lieu s’affiche, chacun pose son épingle sur la carte. Jusqu’à ${limits.maxPoints} pts par lieu : plus tu es proche, plus tu marques. La catégorie France se joue sur une carte zoomée, où il faut être bien plus précis.`),
+    h('p', { class: 'hint hint-left' }, `Un lieu s’affiche, chacun pose son épingle sur la carte. Jusqu’à ${limits.maxPoints} pts par lieu : plus tu es proche, plus tu marques. En mode Pays, il suffit de poser l’épingle dans le bon pays. Les régions et la France se jouent sur une carte zoomée, où il faut être plus précis.`),
   );
 }
 
@@ -58,11 +64,15 @@ export function renderGeoPinSettings(lobby, host, ctx) {
 
 const VIEWS = {
   monde: { k: 1, cx: 0, cy: -12, w: 360, minW: 6, bounds: [-180, -85, 180, 60] },
+  europe: { k: 0.62, cx: 6.2, cy: -53, w: 57, minW: 3, bounds: [-25, -74, 38, -32] },
+  asie: { k: 0.87, cx: 76, cy: -22, w: 112, minW: 5, bounds: [18, -60, 136, 14] },
+  amerique: { k: 0.95, cx: -95, cy: -8, w: 195, minW: 6, bounds: [-195, -75, 5, 60] },
+  afrique: { k: 1, cx: 17.5, cy: -1, w: 113, minW: 5, bounds: [-40, -40, 75, 40] },
   france: { k: 0.688, cx: 1.6, cy: -46.4, w: 17, minW: 1.2, bounds: [-9, -52.5, 12, -40] },
 };
 const RATIO = 3 / 2;
 
-function createMap(viewName, { onPick = null } = {}) {
+function createMap(viewName, { onPick = null, highlightId = null } = {}) {
   const base = VIEWS[viewName] ?? VIEWS.monde;
   const project = ({ lat, lon }) => [lon * base.k, -lat];
   const view = { cx: base.cx, cy: base.cy, w: base.w };
@@ -180,7 +190,7 @@ function createMap(viewName, { onPick = null } = {}) {
             }),
           )
           .join('');
-        land.append(svgEl('path', { d, class: 'map-land' }));
+        land.append(svgEl('path', { d, class: highlightId && country.id === highlightId ? 'map-target' : 'map-land' }));
       }
     })
     .catch(() => box.append(h('p', { class: 'hint gp-map-error' }, 'Carte indisponible 😕')));
@@ -349,13 +359,14 @@ function buildReveal(lobby, ctx) {
   const g = game.geoPin;
   const { result } = game;
   const last = game.round >= game.totalRounds;
-  const map = createMap(result.place.view);
+  const isCountry = Boolean(result.place.countryId);
+  const map = createMap(result.place.view, { highlightId: result.place.countryId });
   const placed = result.entries.filter((e) => e.km !== null);
   for (const e of placed) {
     const player = ctx.getPlayer(e.playerId);
-    map.addPin(e, { color: ctx.colorFor(e.playerId), label: ctx.initials(player.name), line: result.place });
+    map.addPin(e, { color: ctx.colorFor(e.playerId), label: ctx.initials(player.name), line: isCountry ? null : result.place });
   }
-  map.addPin(result.place, { star: true });
+  if (!isCountry) map.addPin(result.place, { star: true }); // un pays est colorié, pas besoin d'étoile
   map.fit([result.place, ...placed]);
 
   const rows = result.entries.map((e, i) => {
@@ -365,7 +376,7 @@ function buildReveal(lobby, ctx) {
       { class: `gp-row${i === 0 && e.km !== null ? ' is-best' : ''}` },
       ctx.avatar(player, 'sm'),
       h('span', { class: 'final-name' }, player.name),
-      h('span', { class: 'gp-km' }, e.km === null ? 'pas d’épingle' : e.km === 0 ? 'pile dessus 🎯' : `à ${km(e.km)}`),
+      h('span', { class: 'gp-km' }, e.km === null ? 'pas d’épingle' : e.km === 0 ? (isCountry ? 'dans le pays 🎯' : 'pile dessus 🎯') : isCountry ? `à ${km(e.km)} de la frontière` : `à ${km(e.km)}`),
       h('strong', { class: 'gp-points' }, `+${e.points}`),
     );
   });
