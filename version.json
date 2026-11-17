@@ -1,12 +1,12 @@
 {
   "_info": "Modifie ce fichier pour annoncer une nouvelle version : numéro, nom, date (AAAA-MM-JJ) et liste des nouveautés. C'est pris en compte immédiatement, sans redémarrer le serveur.",
-  "version": "0.6.3",
-  "name": "Un seul indice (bêta)",
+  "version": "0.6.4",
+  "name": "Menteur ! (bêta)",
   "date": "2026-11-17",
   "notes": [
-    "Nouveau jeu « Un seul indice » (bêta), façon Just One : coopératif, chacun écrit UN indice d’un mot pour le devineur",
-    "Les indices identiques (ou de la même famille) s’annulent ; vérification par les joueurs, un seul essai pour le devineur",
-    "Mot trouvé : +3 au devineur, +1 par indice gardé ; score d’équipe à la fin. L’hôte peut accepter un synonyme",
-    "Aussi en bêta : Tous pareils !, Image Mystère, Sur la même onde, Chrono Stars, Nom de code, Mot Mystère"
+    "Nouveau jeu « Menteur ! » (bêta) : chacun écrit 2 vérités et 1 mensonge sur lui",
+    "Chaque joueur passe sur la sellette : les autres votent pour le mensonge. +2 si tu le trouves, +1 au menteur par joueur trompé",
+    "Bouton « 💡 Une idée ? » pour s’inspirer, et le plus grand menteur de la soirée à la fin",
+    "Aussi en bêta : Un seul indice, Tous pareils !, Image Mystère, Sur la même onde, Chrono Stars, Nom de code, Mot Mystère"
   ]
 }

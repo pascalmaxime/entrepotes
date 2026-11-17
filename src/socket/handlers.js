@@ -162,6 +162,8 @@ export function registerSocketHandlers(io, manager) {
       broadcast(lobby);
       return result;
     });
+    lobbyAction('mt:sheet', (lobby, playerId, payload) => lobby.mtSheet(playerId, payload));
+    lobbyAction('mt:vote', (lobby, playerId, payload) => lobby.mtVote(playerId, payload));
     lobbyAction('uj:clue', (lobby, playerId, payload) => lobby.ujClue(playerId, payload));
     lobbyAction('uj:toggle', (lobby, playerId, payload) => lobby.ujToggle(playerId, payload));
     lobbyAction('uj:confirm', (lobby, playerId) => lobby.ujConfirm(playerId));

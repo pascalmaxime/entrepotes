@@ -16,6 +16,7 @@ import { buildMemeOndeScreen, memeOndeScreenKey, renderMemeOndeBest, renderMemeO
 import { buildImageMystereScreen, imageMystereScreenKey, renderImageMystereBest, renderImageMystereSettings } from './imagemystere.js';
 import { buildTousPareilsScreen, renderTousPareilsSettings, tousPareilsScreenKey } from './touspareils.js';
 import { buildUnSeulIndiceScreen, renderUnSeulIndiceEnd, renderUnSeulIndiceSettings, unSeulIndiceScreenKey } from './unseulindice.js';
+import { buildMenteurScreen, menteurScreenKey, renderMenteurBest, renderMenteurSettings } from './menteur.js';
 import { attachTicTacBoumSocket, buildTicTacBoumScreen, renderTicTacBoumFinal, renderTicTacBoumSettings, ticTacBoumScreenKey } from './tictacboum.js';
 
 const SESSION_KEY = 'entre-potes:session'; // sessionStorage : un joueur par onglet (pratique pour tester à plusieurs)
@@ -23,7 +24,7 @@ const NAME_KEY = 'entre-potes:name';
 const SEEN_VERSION_KEY = 'entre-potes:seen-version';
 const TIER_COLORS = ['var(--tier-1)', 'var(--tier-2)', 'var(--tier-3)', 'var(--tier-4)', 'var(--tier-5)'];
 const AVATAR_COLORS = ['#ff5ca8', '#4fd1ff', '#ffd23f', '#4ade80', '#fb923c', '#a78bfa', '#2dd4bf', '#f87171', '#60a5fa', '#f472b6'];
-const MODE_ICONS = { 'qui-de-nous': '🫵', 'tier-list': '🏆', 'top-meme': '🖼️', 'm-culture': '🧠', imposteur: '🕵️', 'juste-prix': '💰', paint: '🎨', 'loup-garou': '🐺', 'tic-tac-boum': '💣', 'coq-ane': '🐓', bluff: '🃏', 'geo-pin': '📍', 'nom-de-code': '🔐', 'mot-mystere': '🔤', 'chrono-stars': '⏳', 'meme-onde': '🔮', 'image-mystere': '🖼️', 'tous-pareils': '👯', 'un-seul-indice': '☝️' };
+const MODE_ICONS = { 'qui-de-nous': '🫵', 'tier-list': '🏆', 'top-meme': '🖼️', 'm-culture': '🧠', imposteur: '🕵️', 'juste-prix': '💰', paint: '🎨', 'loup-garou': '🐺', 'tic-tac-boum': '💣', 'coq-ane': '🐓', bluff: '🃏', 'geo-pin': '📍', 'nom-de-code': '🔐', 'mot-mystere': '🔤', 'chrono-stars': '⏳', 'meme-onde': '🔮', 'image-mystere': '🖼️', 'tous-pareils': '👯', 'un-seul-indice': '☝️', menteur: '🤥' };
 
 const socket = io();
 
@@ -270,12 +271,14 @@ function render() {
   const isImageMystere = kind === 'image-mystere' && lobby.state.startsWith('im-');
   const isTousPareils = kind === 'tous-pareils' && lobby.state.startsWith('tp-');
   const isUnSeulIndice = kind === 'un-seul-indice' && lobby.state.startsWith('uj-');
+  const isMenteur = kind === 'menteur' && lobby.state.startsWith('mt-');
   document.querySelector('.app')?.classList.toggle('is-wide', isPaint || isLoupGarou || isTicTacBoum || isNomDeCode);
   if (!isLoupGarou) document.querySelector('.app')?.classList.remove('is-night');
   const isCoqAne = kind === 'coq-ane' && lobby.state.startsWith('cc-');
   const isBluff = kind === 'bluff' && lobby.state.startsWith('bl-');
   const isGeoPin = kind === 'geo-pin' && lobby.state.startsWith('gp-');
-  if (isUnSeulIndice) memeView = (current) => buildUnSeulIndiceScreen(current, quizContext);
+  if (isMenteur) memeView = (current) => buildMenteurScreen(current, quizContext);
+  else if (isUnSeulIndice) memeView = (current) => buildUnSeulIndiceScreen(current, quizContext);
   else if (isTousPareils) memeView = (current) => buildTousPareilsScreen(current, quizContext);
   else if (isImageMystere) memeView = (current) => buildImageMystereScreen(current, quizContext);
   else if (isMemeOnde) memeView = (current) => buildMemeOndeScreen(current, quizContext);
@@ -293,7 +296,7 @@ function render() {
   else if (isQuiz) memeView = { quiz: (current) => buildQuizScreen(current, quizContext, state.quizUi) }[lobby.state];
   else memeView = { create: buildMemeCreate, vote: buildMemeVote }[lobby.state];
   if (memeView) {
-    const key = isUnSeulIndice ? unSeulIndiceScreenKey(lobby) : isTousPareils ? tousPareilsScreenKey(lobby) : isImageMystere ? imageMystereScreenKey(lobby) : isMemeOnde ? memeOndeScreenKey(lobby) : isChronoStars ? chronoStarsScreenKey(lobby) : isMotMystere ? motMystereScreenKey(lobby) : isNomDeCode ? nomDeCodeScreenKey(lobby) : isGeoPin ? geoPinScreenKey(lobby) : isBluff ? bluffScreenKey(lobby, state.quizUi) : isCoqAne ? coqAneScreenKey(lobby) : isTicTacBoum ? ticTacBoumScreenKey(lobby) : isLoupGarou ? loupGarouScreenKey(lobby) : isPaint ? paintScreenKey(lobby) : isJustePrix ? justePrixScreenKey(lobby, state.quizUi) : isImpostor ? impostorScreenKey(lobby) : isQuiz ? quizScreenKey(lobby, state.quizUi) : memeScreenKey(lobby);
+    const key = isMenteur ? menteurScreenKey(lobby) : isUnSeulIndice ? unSeulIndiceScreenKey(lobby) : isTousPareils ? tousPareilsScreenKey(lobby) : isImageMystere ? imageMystereScreenKey(lobby) : isMemeOnde ? memeOndeScreenKey(lobby) : isChronoStars ? chronoStarsScreenKey(lobby) : isMotMystere ? motMystereScreenKey(lobby) : isNomDeCode ? nomDeCodeScreenKey(lobby) : isGeoPin ? geoPinScreenKey(lobby) : isBluff ? bluffScreenKey(lobby, state.quizUi) : isCoqAne ? coqAneScreenKey(lobby) : isTicTacBoum ? ticTacBoumScreenKey(lobby) : isLoupGarou ? loupGarouScreenKey(lobby) : isPaint ? paintScreenKey(lobby) : isJustePrix ? justePrixScreenKey(lobby, state.quizUi) : isImpostor ? impostorScreenKey(lobby) : isQuiz ? quizScreenKey(lobby, state.quizUi) : memeScreenKey(lobby);
     if (state.memeScreen?.key !== key || !els.gameView.contains(state.memeScreen.el)) {
       const screen = memeView(lobby);
       state.memeScreen = { key, ...screen };
@@ -415,7 +418,7 @@ function renderLobby(lobby) {
       host
         ? renderModePicker(lobby)
         : h('p', { class: 'mode-readonly' }, h('strong', {}, `${MODE_ICONS[mode.id] ?? ''} ${mode.label}`), h('br'), mode.description),
-      lobby.mode === 'm-culture' ? renderQuizSettings(lobby, host, quizContext) : lobby.mode === 'paint' ? renderPaintSettings(lobby, host, quizContext) : lobby.mode === 'loup-garou' ? renderLoupGarouSettings(lobby, host, quizContext) : lobby.mode === 'tic-tac-boum' ? renderTicTacBoumSettings(lobby, host, quizContext) : lobby.mode === 'coq-ane' ? renderCoqAneSettings(lobby, host, quizContext) : lobby.mode === 'nom-de-code' ? renderNomDeCodeSettings(lobby, host, quizContext) : lobby.mode === 'mot-mystere' ? renderMotMystereSettings(lobby, host, quizContext) : lobby.mode === 'chrono-stars' ? renderChronoStarsSettings(lobby, host, quizContext) : lobby.mode === 'meme-onde' ? renderMemeOndeSettings(lobby, host, quizContext) : lobby.mode === 'image-mystere' ? renderImageMystereSettings(lobby, host, quizContext) : lobby.mode === 'tous-pareils' ? renderTousPareilsSettings(lobby, host, quizContext) : lobby.mode === 'un-seul-indice' ? renderUnSeulIndiceSettings(lobby, host, quizContext) : renderRounds(lobby, host),
+      lobby.mode === 'm-culture' ? renderQuizSettings(lobby, host, quizContext) : lobby.mode === 'paint' ? renderPaintSettings(lobby, host, quizContext) : lobby.mode === 'loup-garou' ? renderLoupGarouSettings(lobby, host, quizContext) : lobby.mode === 'tic-tac-boum' ? renderTicTacBoumSettings(lobby, host, quizContext) : lobby.mode === 'coq-ane' ? renderCoqAneSettings(lobby, host, quizContext) : lobby.mode === 'nom-de-code' ? renderNomDeCodeSettings(lobby, host, quizContext) : lobby.mode === 'mot-mystere' ? renderMotMystereSettings(lobby, host, quizContext) : lobby.mode === 'chrono-stars' ? renderChronoStarsSettings(lobby, host, quizContext) : lobby.mode === 'meme-onde' ? renderMemeOndeSettings(lobby, host, quizContext) : lobby.mode === 'image-mystere' ? renderImageMystereSettings(lobby, host, quizContext) : lobby.mode === 'tous-pareils' ? renderTousPareilsSettings(lobby, host, quizContext) : lobby.mode === 'un-seul-indice' ? renderUnSeulIndiceSettings(lobby, host, quizContext) : lobby.mode === 'menteur' ? renderMenteurSettings(lobby, host, quizContext) : renderRounds(lobby, host),
       lobby.mode === 'imposteur' ? renderImpostorSettings(lobby, host, quizContext) : null,
       lobby.mode === 'juste-prix' ? renderJustePrixSettings(lobby, host, quizContext) : null,
       lobby.mode === 'bluff' ? renderBluffSettings(lobby, host, quizContext) : null,
@@ -777,7 +780,8 @@ function renderFinal(lobby) {
   const isImageMystere = final.type === 'image-mystere';
   const isTousPareils = final.type === 'tous-pareils';
   const isUnSeulIndice = final.type === 'un-seul-indice';
-  const unit = (n) => (isTier || isMeme || isQuiz || isImpostor || isJustePrix || isPaint || isCoqAne || isBluff || isGeoPin || isNomDeCode || isMotMystere || isChronoStars || isMemeOnde || isImageMystere || isTousPareils || isUnSeulIndice ? plural(n, 'pt', 'pts') : plural(n, 'vote', 'votes'));
+  const isMenteur = final.type === 'menteur';
+  const unit = (n) => (isTier || isMeme || isQuiz || isImpostor || isJustePrix || isPaint || isCoqAne || isBluff || isGeoPin || isNomDeCode || isMotMystere || isChronoStars || isMemeOnde || isImageMystere || isTousPareils || isUnSeulIndice || isMenteur ? plural(n, 'pt', 'pts') : plural(n, 'vote', 'votes'));
   const [first, second, third] = final.ranking;
   const podium = [[second, 2], [first, 1], [third, 3]].filter(([entry]) => entry);
   if (final.type === 'loup-garou' && final.lg) return renderLoupGarouEnd(final);
@@ -790,7 +794,7 @@ function renderFinal(lobby) {
       'section',
       { class: 'question-card is-compact' },
       h('span', { class: 'eyebrow' }, 'Fin de la partie'),
-      h('h1', { class: 'question' }, isUnSeulIndice ? 'Les meilleurs indices' : isTousPareils ? 'Les plus moutons de la soirée 🐑' : isImageMystere ? 'Les poètes de la soirée' : isMemeOnde ? 'Les plus connectés de la soirée' : isChronoStars ? 'Les stars de Chrono Stars' : isMotMystere ? 'Les champions du Mot Mystère' : isNomDeCode ? 'Les meilleurs espions' : isGeoPin ? 'Les meilleurs explorateurs' : isBluff ? 'Les rois du bluff' : isCoqAne ? 'Les artistes de la soirée' : isPaint ? 'Les Picasso de la soirée' : isJustePrix ? 'Les rois de l’estimation' : isImpostor ? 'Les meilleurs menteurs' : isQuiz ? 'Les cerveaux de la soirée' : isMeme ? 'Les rois du meme' : isTier ? 'Classement général' : 'Les plus désignés de la partie'),
+      h('h1', { class: 'question' }, isMenteur ? 'Les meilleurs détecteurs de mensonges' : isUnSeulIndice ? 'Les meilleurs indices' : isTousPareils ? 'Les plus moutons de la soirée 🐑' : isImageMystere ? 'Les poètes de la soirée' : isMemeOnde ? 'Les plus connectés de la soirée' : isChronoStars ? 'Les stars de Chrono Stars' : isMotMystere ? 'Les champions du Mot Mystère' : isNomDeCode ? 'Les meilleurs espions' : isGeoPin ? 'Les meilleurs explorateurs' : isBluff ? 'Les rois du bluff' : isCoqAne ? 'Les artistes de la soirée' : isPaint ? 'Les Picasso de la soirée' : isJustePrix ? 'Les rois de l’estimation' : isImpostor ? 'Les meilleurs menteurs' : isQuiz ? 'Les cerveaux de la soirée' : isMeme ? 'Les rois du meme' : isTier ? 'Classement général' : 'Les plus désignés de la partie'),
     ),
     h(
       'section',
@@ -825,6 +829,7 @@ function renderFinal(lobby) {
     isMemeOnde ? renderMemeOndeBest(final, quizContext) : null,
     isImageMystere ? renderImageMystereBest(final, quizContext) : null,
     isUnSeulIndice ? renderUnSeulIndiceEnd(final) : null,
+    isMenteur ? renderMenteurBest(final, quizContext) : null,
     isGeoPin ? renderGeoPinBest(final, quizContext) : null,
     isMeme
       ? renderMemeRecap(final)
@@ -834,7 +839,7 @@ function renderFinal(lobby) {
       ? h(
           'section',
           { class: 'card' },
-          h('h2', {}, isImpostor || isNomDeCode || isChronoStars || isMemeOnde || isImageMystere || isUnSeulIndice ? 'Récap des manches' : isMotMystere ? 'Les mots de la partie' : 'Récap des questions'),
+          h('h2', {}, isImpostor || isNomDeCode || isChronoStars || isMemeOnde || isImageMystere || isUnSeulIndice ? 'Récap des manches' : isMenteur ? 'Les mensonges de la soirée' : isMotMystere ? 'Les mots de la partie' : 'Récap des questions'),
           h(
             'ul',
             { class: 'recap' },

@@ -1501,3 +1501,40 @@ button.uj-clue { cursor: pointer; }
 .uj-verdict.is-fail { background: rgba(255, 107, 107, 0.15); border-color: rgba(255, 107, 107, 0.45); }
 .uj-final { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .uj-final-score { font-family: var(--font-display); font-size: 3rem; color: var(--accent); }
+
+/* ---------- Menteur ! ---------- */
+.mt-form { display: flex; flex-direction: column; gap: 10px; }
+.mt-row { display: flex; gap: 8px; align-items: stretch; padding: 6px; border-radius: 14px; border: 2px solid transparent; transition: border-color 0.15s, background 0.15s; }
+.mt-row.is-lie { border-color: var(--danger); background: rgba(255, 107, 107, 0.08); }
+.mt-input { flex: 1; min-width: 0; resize: none; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg-2); color: var(--text); font: 600 1rem/1.3 var(--font-body); }
+.mt-input:focus { outline: none; border-color: var(--accent); }
+.mt-lie-toggle { flex: 0 0 auto; width: 104px; border: 2px solid var(--line); border-radius: 12px; background: var(--card-2); color: var(--muted); font: 800 0.85rem var(--font-body); cursor: pointer; }
+.mt-lie-toggle.is-lie { background: var(--danger); border-color: var(--danger); color: #fff; }
+.mt-actions { display: flex; gap: 10px; }
+.mt-actions .btn { flex: 1; }
+.mt-idea { margin: 0; color: var(--accent); font-weight: 700; font-size: 0.9rem; }
+.mt-idea:empty { display: none; }
+.mt-sent { margin: 0; text-align: center; font-weight: 700; color: var(--muted); }
+.mt-sent.is-sent { color: var(--tier-1); }
+.mt-sellette { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.mt-sellette .quiz-head { width: 100%; }
+.mt-sellette h1 { margin: 0; }
+.mt-tip { margin: 0; text-align: center; font-weight: 700; color: var(--muted); }
+.mt-cards { display: flex; flex-direction: column; gap: 10px; }
+.mt-card { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; padding: 16px 14px; border-radius: 16px; border: 2px solid var(--line); background: var(--card); color: var(--text); font: 700 1.05rem/1.35 var(--font-body); text-align: left; }
+.mt-card.is-revealed { animation: cs-in 0.35s ease-out both; animation-delay: calc(var(--i) * 0.12s); }
+button.mt-card { cursor: pointer; }
+button.mt-card:hover { border-color: rgba(255, 210, 63, 0.6); }
+.mt-card.is-voted { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(255, 210, 63, 0.25); }
+.mt-num { flex: 0 0 auto; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--card-2); font-family: var(--font-display); }
+.mt-text { flex: 1; min-width: 0; overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 2px; }
+.mt-tag { font-size: 1.3rem; }
+.mt-card.is-lie:not(.is-revealed) { border-color: var(--danger); }
+.mt-card.is-revealed.is-lie { border-color: var(--danger); background: linear-gradient(90deg, rgba(255, 107, 107, 0.2), var(--card)); }
+.mt-card.is-revealed.is-lie .mt-num { background: var(--danger); }
+.mt-card.is-revealed.is-true { opacity: 0.75; }
+.mt-kind { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.08em; color: var(--muted); }
+.mt-card.is-lie .mt-kind { color: var(--danger); }
+.mt-voters { display: flex; flex-wrap: wrap; gap: 3px; justify-content: flex-end; max-width: 40%; }
+.mt-verdict { margin: 0; padding: 12px 14px; border-radius: 12px; background: rgba(74, 222, 128, 0.15); border: 1px solid rgba(74, 222, 128, 0.4); font-weight: 800; text-align: center; }
+.mt-verdict.is-fooled { background: rgba(255, 107, 107, 0.15); border-color: rgba(255, 107, 107, 0.45); }

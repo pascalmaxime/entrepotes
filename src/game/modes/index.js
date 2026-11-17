@@ -17,13 +17,14 @@ import memeOnde from './memeOnde.js';
 import imageMystere from './imageMystere.js';
 import tousPareils from './tousPareils.js';
 import unSeulIndice from './unSeulIndice.js';
+import menteur from './menteur.js';
 
 // Pour ajouter un mode : créer son fichier puis l'ajouter à cette liste.
 // kind 'question' : une question + un vote (Qui de nous, Tier List) ; kind 'meme' : Top Meme ;
 // kind 'quiz' : M-Culture ; kind 'impostor' : L'Imposteur ; kind 'juste-prix' : Le Juste Prix ; kind 'paint' : Paint ;
 // kind 'loup-garou' : Loup-Garou ; kind 'tic-tac-boum' : Tic Tac Boum ;
-// kind 'coq-ane' : Du coq à l'âne ; kind 'bluff' : Bluff ; kind 'geo-pin' : Géo Pin ; kind 'nom-de-code' : Nom de code ; kind 'mot-mystere' : Mot Mystère ; kind 'chrono-stars' : Chrono Stars ; kind 'meme-onde' : Sur la même onde ; kind 'image-mystere' : Image Mystère ; kind 'tous-pareils' : Tous pareils ! ; kind 'un-seul-indice' : Un seul indice.
-const PLAYABLE = [quiDeNous, tierList, topMeme, mCulture, imposteur, justePrix, paint, loupGarou, ticTacBoum, coqAne, bluff, geoPin, nomDeCode, motMystere, chronoStars, memeOnde, imageMystere, tousPareils, unSeulIndice];
+// kind 'coq-ane' : Du coq à l'âne ; kind 'bluff' : Bluff ; kind 'geo-pin' : Géo Pin ; kind 'nom-de-code' : Nom de code ; kind 'mot-mystere' : Mot Mystère ; kind 'chrono-stars' : Chrono Stars ; kind 'meme-onde' : Sur la même onde ; kind 'image-mystere' : Image Mystère ; kind 'tous-pareils' : Tous pareils ! ; kind 'un-seul-indice' : Un seul indice ; kind 'menteur' : Menteur !
+const PLAYABLE = [quiDeNous, tierList, topMeme, mCulture, imposteur, justePrix, paint, loupGarou, ticTacBoum, coqAne, bluff, geoPin, nomDeCode, motMystere, chronoStars, memeOnde, imageMystere, tousPareils, unSeulIndice, menteur];
 
 export const MODES = Object.fromEntries(PLAYABLE.map((mode) => [mode.id, mode]));
 export const DEFAULT_MODE = quiDeNous.id;
