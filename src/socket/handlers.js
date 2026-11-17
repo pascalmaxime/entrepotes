@@ -162,6 +162,9 @@ export function registerSocketHandlers(io, manager) {
       broadcast(lobby);
       return result;
     });
+    lobbyAction('im:tell', (lobby, playerId, payload) => lobby.imTell(playerId, payload));
+    lobbyAction('im:play', (lobby, playerId, payload) => lobby.imPlay(playerId, payload));
+    lobbyAction('im:vote', (lobby, playerId, payload) => lobby.imVote(playerId, payload));
     lobbyAction('om:clue', (lobby, playerId, payload) => lobby.omClue(playerId, payload));
     lobbyAction('om:guess', (lobby, playerId, payload) => lobby.omGuess(playerId, payload));
     lobbyAction('cs:go', (lobby, playerId) => lobby.csGo(playerId));

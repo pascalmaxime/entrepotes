@@ -1,12 +1,12 @@
 {
   "_info": "Modifie ce fichier pour annoncer une nouvelle version : numéro, nom, date (AAAA-MM-JJ) et liste des nouveautés. C'est pris en compte immédiatement, sans redémarrer le serveur.",
-  "version": "0.5.7",
-  "name": "Chrono Stars + Sur la même onde (bêta)",
+  "version": "0.6.1",
+  "name": "Image Mystère (bêta)",
   "date": "2026-11-16",
   "notes": [
-    "Nouveau jeu « Sur la même onde » (bêta), façon Wavelength : une échelle (« Froid ↔ Chaud »), une cible cachée. Le médium donne un indice, les autres placent leur curseur",
-    "Nouveau jeu « Chrono Stars » (bêta), façon Time’s Up : 2 équipes, le même paquet de célébrités sur 3 manches (description, un seul mot, mime)",
-    "151 échelles et 394 personnalités (stars, histoire, fiction)",
-    "Toujours en bêta : « Nom de code » et « Mot Mystère »"
+    "Nouveau jeu « Image Mystère » (bêta), façon Dixit, avec les images de la bibliothèque Top Meme",
+    "Le conteur choisit une image et une phrase, les autres posent l’image qui colle le mieux, puis on cherche la sienne",
+    "Trop évident ou trop obscur : le conteur ne marque rien ! +1 par joueur piégé par ton image",
+    "Aussi en bêta : « Sur la même onde », « Chrono Stars », « Nom de code » et « Mot Mystère »"
   ]
 }
