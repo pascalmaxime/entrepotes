@@ -1473,3 +1473,31 @@ button.tp-group { cursor: pointer; }
 .tp-members { display: flex; flex-wrap: wrap; gap: 6px; }
 .tp-member { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; border-radius: 999px; background: var(--bg-2); font-weight: 800; font-size: 0.85rem; }
 .tp-member em { color: var(--muted); font-weight: 600; }
+
+/* ---------- Un seul indice ---------- */
+.uj-team { margin: 6px 0 0; font-weight: 800; color: var(--muted); font-size: 0.9rem; }
+.uj-word { text-align: center; display: flex; flex-direction: column; gap: 6px; border: 2px solid var(--accent); }
+.uj-word-text { font-family: var(--font-display); font-size: clamp(1.8rem, 9vw, 2.8rem); text-transform: uppercase; color: var(--accent); overflow-wrap: anywhere; }
+.uj-form { display: flex; flex-direction: column; gap: 10px; }
+.uj-sent { margin: 0; text-align: center; font-weight: 700; color: var(--muted); }
+.uj-sent.is-sent { color: var(--tier-1); }
+.uj-wait { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.uj-wait h2 { margin: 0; }
+.uj-big-emoji { font-size: 3.5rem; line-height: 1; animation: cs-bounce 1s ease-in-out infinite alternate; }
+.uj-tip { margin: 0; color: var(--muted); font-weight: 700; }
+.uj-center { text-align: center; }
+.uj-clues { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.uj-clue { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 8px; border-radius: 14px; background: var(--bg-2); border: 2px solid var(--line); color: var(--text); font: inherit; text-align: center; animation: cs-in 0.3s ease-out both; animation-delay: calc(var(--i) * 0.06s); }
+button.uj-clue { cursor: pointer; }
+.uj-clue-text { font-family: var(--font-display); font-size: 1.25rem; text-transform: uppercase; overflow-wrap: anywhere; }
+.uj-clue-author { display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 700; color: var(--muted); }
+.uj-clue.is-cancelled { opacity: 0.5; border-style: dashed; }
+.uj-clue.is-cancelled .uj-clue-text { text-decoration: line-through; text-decoration-thickness: 3px; text-decoration-color: var(--danger); }
+.uj-clue-tag { position: absolute; top: -8px; right: 8px; padding: 1px 8px; border-radius: 999px; background: var(--danger); color: #fff; font-size: 0.65rem; font-weight: 900; }
+.uj-shown .uj-clue { border-color: var(--accent); }
+.uj-check { display: flex; flex-direction: column; gap: 10px; }
+.uj-check h2 { margin: 0; }
+.uj-verdict { margin: 0; padding: 12px 14px; border-radius: 12px; background: rgba(74, 222, 128, 0.15); border: 1px solid rgba(74, 222, 128, 0.4); font-weight: 800; text-align: center; }
+.uj-verdict.is-fail { background: rgba(255, 107, 107, 0.15); border-color: rgba(255, 107, 107, 0.45); }
+.uj-final { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.uj-final-score { font-family: var(--font-display); font-size: 3rem; color: var(--accent); }

@@ -162,6 +162,11 @@ export function registerSocketHandlers(io, manager) {
       broadcast(lobby);
       return result;
     });
+    lobbyAction('uj:clue', (lobby, playerId, payload) => lobby.ujClue(playerId, payload));
+    lobbyAction('uj:toggle', (lobby, playerId, payload) => lobby.ujToggle(playerId, payload));
+    lobbyAction('uj:confirm', (lobby, playerId) => lobby.ujConfirm(playerId));
+    lobbyAction('uj:guess', (lobby, playerId, payload) => lobby.ujGuess(playerId, payload));
+    lobbyAction('uj:accept', (lobby, playerId) => lobby.ujAccept(playerId));
     lobbyAction('tp:answer', (lobby, playerId, payload) => lobby.tpAnswer(playerId, payload));
     lobbyAction('tp:merge', (lobby, playerId, payload) => lobby.tpMerge(playerId, payload));
     lobbyAction('im:tell', (lobby, playerId, payload) => lobby.imTell(playerId, payload));
