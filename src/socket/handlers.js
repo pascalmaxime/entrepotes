@@ -162,6 +162,8 @@ export function registerSocketHandlers(io, manager) {
       broadcast(lobby);
       return result;
     });
+    lobbyAction('tp:answer', (lobby, playerId, payload) => lobby.tpAnswer(playerId, payload));
+    lobbyAction('tp:merge', (lobby, playerId, payload) => lobby.tpMerge(playerId, payload));
     lobbyAction('im:tell', (lobby, playerId, payload) => lobby.imTell(playerId, payload));
     lobbyAction('im:play', (lobby, playerId, payload) => lobby.imPlay(playerId, payload));
     lobbyAction('im:vote', (lobby, playerId, payload) => lobby.imVote(playerId, payload));

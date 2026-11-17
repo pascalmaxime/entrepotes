@@ -1452,3 +1452,24 @@ button.im-card:hover { transform: translateY(-2px); }
 .im-best { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .im-best-img { width: min(100%, 240px); border-radius: 12px; }
 @media (max-width: 420px) { .im-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .im-grid.is-reveal { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------- Tous pareils ! ---------- */
+.tp-question { margin: 8px 0 0; }
+.tp-form { display: flex; flex-direction: column; gap: 10px; }
+.tp-sent { margin: 0; text-align: center; font-weight: 700; color: var(--muted); }
+.tp-sent.is-sent { color: var(--tier-1); }
+.tp-merge-tip { margin: 0; padding: 10px 12px; border-radius: 12px; background: var(--bg-2); color: var(--muted); font-weight: 700; font-size: 0.9rem; text-align: center; }
+.tp-groups { display: flex; flex-direction: column; gap: 10px; }
+.tp-group { display: flex; flex-direction: column; gap: 8px; width: 100%; text-align: left; color: var(--text); font: inherit; border: 2px solid var(--line); animation: screen-in 0.35s ease-out both; animation-delay: calc(var(--i) * 0.08s); }
+button.tp-group { cursor: pointer; }
+.tp-group.is-top { border-color: var(--accent); background: linear-gradient(180deg, rgba(255, 210, 63, 0.12), var(--card)); }
+.tp-group.is-alone { opacity: 0.75; }
+.tp-group.is-picked { border-color: var(--cyan); box-shadow: 0 0 0 4px rgba(79, 209, 255, 0.3); opacity: 1; }
+.tp-group-head { display: flex; align-items: center; gap: 10px; }
+.tp-label { font-family: var(--font-display); font-size: 1.35rem; text-transform: uppercase; overflow-wrap: anywhere; }
+.tp-count { padding: 2px 10px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-weight: 900; }
+.tp-group.is-alone .tp-count { background: var(--card-2); color: var(--muted); }
+.tp-crown { margin-left: auto; font-size: 1.4rem; }
+.tp-members { display: flex; flex-wrap: wrap; gap: 6px; }
+.tp-member { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 3px; border-radius: 999px; background: var(--bg-2); font-weight: 800; font-size: 0.85rem; }
+.tp-member em { color: var(--muted); font-weight: 600; }

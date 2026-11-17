@@ -24,6 +24,7 @@ COPY data/nomdecode.json ./data/nomdecode.json
 COPY data/motmystere.json ./data/motmystere.json
 COPY data/chronostars.json ./data/chronostars.json
 COPY data/memeonde.json ./data/memeonde.json
+COPY data/touspareils.json ./data/touspareils.json
 COPY version.json ./
 
 # Dossier des images Top Meme, accessible en écriture par l'utilisateur non-root "node".
